@@ -13,6 +13,24 @@ class UsersController extends ApiController {
 		return $this->respond($this->transformCollection($users));
 	}
 
+	public function adminauth() {
+
+		if (!Input::has('user')) {
+			return $this->respondInsufficientPrivileges('No user');
+		}
+
+		if (!Input::has('password')) {
+			return $this->respondInsufficientPrivileges('No password provided');
+		}
+
+		if (Input::get('user') == 'admin' && Input::get('password') == 'root') {
+			return $this->respondNoContent();
+		} else {
+			return $this->respondInsufficientPrivileges('User or pass is wrong');
+		}
+
+	}
+
 	public function addlife($user_id) {
 		
 		$validator = Validator::make(array(

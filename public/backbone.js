@@ -558,7 +558,6 @@ App.Views.AddCard = Backbone.View.extend({
 	clearForm: function() {
 		this.word.val('');
 		this.answer.val('');
-		this.category_id.val('');
 	}
 });
 
@@ -1153,20 +1152,42 @@ App.Router = Backbone.Router.extend({
 
 	login: function() {
 		$('#layout').empty().append(window.App.JST['auth']);
+
+		var router = this;
 		
-		$('#log-in').click({router: this}, check);
+		$('#log-in').click(check);
+
+		$(document).keypress(function(e) {
+    		if(e.which == 13) {
+        		check(e);
+    		}
+		});
 
 		function check(e) {
 			e.preventDefault(e);
-			e.data.router.navigate('/words');
 			if (App.session.authenticated()) {
-				e.data.router.navigate('/words', {trigger: true});
+				router.navigate('/categories', {trigger: true});
 			} else {
-				App.session.save({
-					'user_id': $('#user').val(),
-					'access_token': $('#password').val()
+				var data = {
+					user: $('#user').val(),
+					password: $('#password').val()
+				};
+
+				$.post("/api/users/adminauth", data).success(function() {
+
+					App.session.save({
+						'user_id': $('#user').val(),
+						'access_token': $('#password').val()
+					});
+
+					router.navigate('/categories', {trigger: true});
+
+				}).fail(function(data) {
+					// $(data.responseJSON.error.message).insertAfter('#log-in');
+					$('#error-message').remove();
+					$('#log-in').parent().append('<span id="error-message"> ' + data.responseJSON.error.message + '</span>');
+					console.log(data.responseJSON.error.message);
 				});
-				e.data.router.navigate('/categories', {trigger: true});
 			} 
 		};
 

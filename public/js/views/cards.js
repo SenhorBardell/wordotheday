@@ -156,7 +156,6 @@ App.Views.AddCard = Backbone.View.extend({
 	clearForm: function() {
 		this.word.val('');
 		this.answer.val('');
-		this.category_id.val('');
 	}
 });
 

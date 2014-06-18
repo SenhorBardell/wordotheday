@@ -51,6 +51,8 @@ Route::group(array('prefix' => 'api'), function() {
 
 	Route::resource('users', 'UsersController');
 
+	Route::post('users/adminauth', 'UsersController@adminauth');
+
 	Route::post('user/{user_id}/addlife', 'UsersController@addlife');
 
 	Route::post('user/{user_id}/subscribe/', 'UsersController@subscribe');
