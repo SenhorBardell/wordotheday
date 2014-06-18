@@ -1,0 +1,341 @@
+<?php
+
+class UsersController extends ApiController {
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		$users = User::all();
+		return $this->respond($this->transformCollection($users));
+	}
+
+	public function addlife($user_id) {
+		
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$user = User::find($user_id);
+		if ($user) {
+			if ($user->balance > 3) {
+				$user->balance--;
+				$user->save();
+				return $this->respond($this->transform($user));
+			} else {
+				return $this->respondInsufficientPrivileges('Not enough money');
+			}
+		} else {
+			return $this->respondNotFound('User not found');
+		}
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store()
+	{
+		$validation = User::validate(Input::all());
+		if ($validation->passes()) {
+			User::create(array(
+				'username' => Input::get('username'),
+				'password' => Input::get('password'),
+				'balance' => Input::has('balance') ? Input::get('balance') : 0
+			));
+
+			$this->respond('ok');
+		}
+
+		if ($validation->fails()) {
+		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
+		 }
+		
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		$validator = Validator::make(array(
+			'id' => $id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$user = User::find($id);
+
+		if ($user) {
+			return $this->respond($this->transform($user));
+		}
+
+		return $this->respondNotFound('User not found');
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update($id)
+	{
+		$validation = $validator = Validator::make(array(
+			'username' => Input::get('username'),
+			'balance' => Input::get('balance')
+		), array(
+			'username' => 'Required|Min:3|Max:80|Alpha',
+			'balance' => 'Integer'
+		));
+
+
+		if ($validation->passes()) {
+			$user = User::find($id);
+
+			if (!$user) {
+				$this->respondNotFound('Cant find user');
+			}
+
+			$user->username = Input::get('username');
+			$user->balance = Input::get('balance');
+			// $user->password = Input::get('password');
+
+			if ($user->save()) {
+				return $this->respondNoContent();
+			}
+
+			return $this->respondServerError();
+		}
+
+		if ($validation->fails()) {
+		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
+		 }
+	}
+
+	public function subscriptions($user_id) {
+
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$subscriptions = User::find($user_id)->subscriptions;
+		$subscriptions_ar = array();
+		foreach ($subscriptions as $subscription) {
+			array_push($subscriptions_ar, array(
+				'category_id' => $subscription['category_id'],
+				'id' => $subscription['id']
+			));
+		}
+		$result = array('user_id' => $user_id, 'subscriptions' => $subscriptions_ar);
+		return $this->respond($result);
+	}
+
+	public function subscribe($user_id) {
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$category_id = Input::get('category_id');
+		if (Subscription::where('category_id', '=', $category_id)->first()) {
+			return $this->respondInsufficientPrivileges('Already subscribed');
+		}
+		if ($category_id) {
+			$subscription = Subscription::create(array(
+				'user_id' => $user_id,
+				'category_id' => $category_id
+			));
+			return $this->respond(array('user_id' => $user_id, 'category_id' => $category_id, 'id' => $subscription['id']));
+		}
+		return $this->respondNotFound();
+		
+	}
+
+	public function unsubscribe($user_id) {
+
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$category_id = Input::get('category_id');
+		if ($category_id) {
+			$subscription = Subscription::whereRaw('user_id = '.$user_id.' and category_id = '.$category_id)->first();
+			if ($subscription) {
+				$subscription->delete();
+				return $this->respondNoContent();
+			}
+			return $this->respondNotFound('Subscription not found');
+		}
+
+		return $this->respondNotFound('Category not found');
+	}
+
+	public function devices($user_id) {
+
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$devices = User::find($user_id)->devices->toArray();
+		$device_r = array();
+		if ($devices) {
+			foreach ($devices as $device) {
+				array_push($device_r, $device['device_id']);
+			}
+			return $this->respond(array('user_id' => $user_id, 'devices' => $device_r));
+		}
+	
+		return $this->respondNotFound('Devices not found');
+	}
+
+	public function add_device($user_id) {
+
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$user = User::find($user_id);
+		$devices = $user->devices->toArray(); // Check for duplicates?
+		$device_id = Input::get('device_id');
+
+		if (!!!$device_id) {
+			return $this->respondInsufficientPrivileges('Please provide a device');
+		}
+
+
+		if ($user) {
+			if ($device_id) {
+				if (in_array($device_id, $devices)) {
+					return $this->respondInsufficientPrivileges('User already have this device');
+				}
+
+				Device::create(array('user_id' => $user_id, 'device_id' => $device_id));
+				return $this->respondNoContent();
+			}
+			return $this->respondNotFound('Please give a device');
+		}
+
+		return $this->respondNotFound('User or devices not found');
+	}
+
+	public function remove_device($user_id) {
+
+		$validator = Validator::make(array(
+			'id' => $user_id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+
+		$device_id = Input::get('device_id');
+
+		if (!$device_id) {
+			return $this->respondNotFound('Please give device id');
+		}
+
+		$device = Device::whereRaw('user_id = '.$user_id.' and device_id = '.$device_id);
+		if ($device) {
+				if ($device->delete()) {
+					return $this->respondNoContent();
+				}
+				
+				return $this->respondNotFound('Device not found');
+		}
+		return $this->respondNotFound('User or devices not found');
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		$validator = Validator::make(array(
+			'id' => $id
+		), array(
+			'id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+
+		$user = User::find($id);
+		if ($user) {
+			if ($user->delete()) {
+				return $this->respondNoContent();
+			}
+			return $this->respondServerError('Cant delete user');
+		}
+		return $this->respondNotFound('User not found');
+	}
+
+	private function transformCollection($users) {
+		return array_map([$this, 'transform'], $users->toArray());
+	}
+
+	private function transform($user) {
+		return [
+			'username' => $user['username'],
+			// 'password' => $user['password'],
+			'max_result' => $user['max_result'],
+			'overal_standing' => $user['overal_standing'],
+			'balance' => $user['balance'],
+			'id' => $user['id']
+		];
+	}
+
+}

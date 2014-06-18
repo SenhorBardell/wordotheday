@@ -1,0 +1,33 @@
+<form id="editUser" class="pure-form" id="addWord">
+	
+	<div>
+		<label for="edit_username">Имя пользователя</label>
+		<input type="text" id="edit_username" name="edit_username" value="<%= username %>">
+	</div>
+
+	<div>
+		<label for="edit_password">Пароль</label>
+		<input type="password" id="edit_password" name="edit_password" >
+	</div>
+
+	<div>
+		<label for="edit_balance">Монет</label>
+		<input type="text" id="edit_balance" name="edit_balance" value="<%= balance %>">
+	</div>
+
+	<div>
+		<label for="edit_max_result">Максимальный результат</label>
+		<input type="text" id="edit_max_result" name="edit_max_result" value="<%= max_result %>">
+	</div>
+
+	<div>
+		<label for="edit_overal_standing">Общий зачет</label>
+		<input type="text" id="edit_overal_standing" name="edit_overal_standing" value="<%= overal_standing %>">
+	</div>
+
+	<div>
+		<input type="submit" class="pure-button pure-button-primary" value="Редактировать">
+		<span class="pure-button close">Закрыть</span>
+	</div>
+
+</form>

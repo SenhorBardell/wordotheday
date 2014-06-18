@@ -1,0 +1,10 @@
+public/node_modules
+npm-debug.log
+vendor
+.idea
+.env.local.php
+composer.phar
+.env.*.php
+.env.php
+.DS_Store
+Thumbs.db

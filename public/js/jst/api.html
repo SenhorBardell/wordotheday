@@ -1,0 +1,142 @@
+<article>
+
+	<p>Апи находится по адресу <a href="http://wordoftheday.herokuapp.com/api"></a></p>
+
+	<h2>Доступные команды</h2>
+
+	<h3>Аутефикация</h3>
+
+	<dl>
+		<dt>POST <strong>/api</strong></dt>
+			<dd>Тестовая аутефикация по токену. Принимает пост запрос с параметром auth. Тестовый запрос будет ввиде auth=test.</dd>
+		<dt>GET <strong>/api</strong></dt>
+			<dd>GET Запрос на всех пользователей. На данный момент все запросы идут без аутефикации. Посему просто GET запрос. В последствиии все GET запросы будут запросами POST с токеном аутефикации.</dd>
+	</dl>
+
+	<h3>Слова</h3>
+
+	<dl>
+		<dt>GET <strong>/api/words</strong></dt>
+			<dd>Получить все слова. Возвращает json {answer, category_id, id, word}</dd>
+
+		<dt>GET <strong>/api/words/{:word}</strong></dt>
+			<dd>Слово по id. Возвращает json {answer, category_id, id, word}</dd>
+
+		<dt>POST <strong>/api/words</strong></dt>
+			<dd>Создать новое слово. Принимает word=string, answer=string, test_id=integer</dd>
+
+		<dt>DELETE <strong>/api/words/{:word}</strong></dt>
+			<dd>Удалить слово по id</dd>
+	</dl>
+
+	<h3>Пользователи</h3>
+
+	<dl>
+		<dt>GET <strong>/api/users</strong></dt>
+			<dd>Получить всех пользователей</dd>
+
+		<dt>GET <strong>/api/users/{:user}</strong></dt>
+			<dd>Получить пользователя по id</dd>
+
+		<dt>PUT <strong>/api/users/{:user}</strong></dt>
+			<dd>Отредактировать пользователя по id. Принимает username=string, password=string, balance=integer</dd>
+
+		<dt>DELETE <strong>/api/users/{:user}</strong></dt>
+			<dd>Удалить пользователя по id</dd>
+
+		<dt>GET <strong>/api/user/{:user}/words</strong></dt>
+			<dd>Показать все слова добавленные пользователем на модерацию</dd>
+
+		<dt>POST <strong>/api/user/{:user}/addword</strong></dt>
+			<dd>Добавить слово на модерацию. Принимает word=string, answer=string</dd>
+
+		<dt>POST <strong>/api/user/{:word}/removeword</strong></dt>
+			<dd>Удалить слово из слов пользователя.</dd>
+	</dl>
+
+	<h3>Слова на модерацию</h3>
+
+	<dl>
+		<dt>GET <strong>/api/moderate/words</strong></dt>
+			<dd>Получить все слова на модерацию</dd>
+
+		<dt>GET <strong>/api/moderate/words/{:word}</strong></dt>
+			<dd>Получить слово по id</dd>
+
+		<dt>DELETE <strong>/api/moderate/word{:word}</strong></dt>
+			<dd>Пометить слово как "отвергнутое". Изменяет статус слова на rejected</dd>
+
+		<dt>POST <strong>/api/moderate/words/{:word}/changestatus</strong></dt>
+			<dd>Изменить статус слова. Принимает status=accepted/rejected/waiting</dd>
+			<dd>При указании статуса как accepted создает копию в базу слов</dd>
+	</dl>
+
+	<h3>Подписки</h3>
+
+	<dl>
+		<dt>POST <strong>/api/user/{:user}/subscribe</strong></dt>
+			<dd>Подписать пользователя на категорию. Принимает category_id=integer</dd>
+
+		<dt>GET <strong>/api/user/{:user}/subscriptions</strong></dt>
+			<dd>Получить список подписанных категорий</dd>
+
+		<dt>POST <strong>/api/user/{:user}/unsubscribe</strong></dt>
+			<dd>Отписать пользователя от категории category_id=integer</dd>
+	</dl>
+
+	<h3>Устройства</h3>
+
+	<dl>
+		<dt>GET <strong>/api/user/{:user}/devices</strong></dt>
+			<dd>Получить все устройства пользователя</dd>
+
+		<dt>POST <strong>/api/user/{:user}/add_device</strong></dt>
+			<dd>Добавить устройство к пользователю. Принимает device_id</dd>
+
+		<dt>POST <strong>/api/user/{:user}/remove_device</strong></dt>
+			<dd>Удалить устройство у пользователя. Принимает device_id=integer</dd>
+
+	</dl>
+
+	<h3>Категории</h3>
+
+	<dl>
+		<dt>GET <strong>/api/categories</strong></dt>
+			<dd>Возвращает все категории [{id, name, subscription_price, test_price, words}, {...}]</dd>
+
+		<dt>GET <strong>/api/categories/{:category}</strong></dt>
+			<dd>Возвращает категорию по id, в формате {id, name, subscription_price, test_price, words}</dd>
+
+		<dt>DELETE <strong>/api/category/{:category}</strong></dt>
+			<dd>Удаляет категорию по id</dd>
+
+		<dt>Удаление и редактирование категорий - апи написано, функционал представлен в админке</dt>
+	</dl>
+
+	<h3>Тест</h3>
+
+	<dl>
+		<dt>POST <strong>/api/test/start</strong></dt>
+			<dd>Начать тест, принимает category=id user=id.</dd>
+			<dd>Возвращает, balance, cards{answer, category_id, id, word}</dd>
+
+		<dt>POST <strong>/api/test/result</strong></dt>
+			<dd>Принимает user=id</dd>
+			<dd>Возвращает status, balance</dd>
+
+		<dt>POST <strong>/api/user/{user_id}/addlife</strong></dt>
+			<dd>Принимает user=id</dd>
+			<dd>Возвращает пользователя {balance, id, max_result, overal_standing, username}</dd>
+	</dl>
+
+	<h3>Настройки</h3>
+
+	<dl>
+		<dt>GET <strong>/api/settings</strong></dt>
+			<dd>Получить настройки. Возвращает json {answer_time, daily_bonus, general_cost, test_cost, top_bonus, word_cost}</dd>
+
+		<dt>POST <strong>/api/settings</strong></dt>
+			<dd>Редактировать настройки. Отправить новые настройки. Принимает answer_time=integer, daily_bonus=interger, general_cost=integer, top_bonus=integer, word_cost=integer</dd>
+	</dl>
+
+</article>
