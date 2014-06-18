@@ -89,18 +89,17 @@ class PushWords extends Command {
 	}
 
 	public function push_wordcard($word) {
-		foreach ($this->users as $user) {
-			$bucket = array(
-				'user_id' => $user['id'],
-				'word' => $word['word'],
-				'answer' => $word['answer']
-			);
-			// Push
-			// PushNotification::app('appNameIOS')
-   //              ->to($deviceToken)
-   //              ->send('Hello World, i`m a push message');
-			$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
-		}
+		// foreach ($this->users as $user) {
+		// 	$bucket = array(
+		// 		'user_id' => $user['id'],
+		// 		'word' => $word['word'],
+		// 		'answer' => $word['answer']
+		// 	);
+			PushNotification::app('IOS')
+				->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
+				->send('Hello World, i`m a push message');
+			// $this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
+		// }
 	}
 
 	/**

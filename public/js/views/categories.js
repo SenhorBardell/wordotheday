@@ -49,8 +49,22 @@ App.Views.Categories = Backbone.View.extend({
 
 App.Views.CategoriesDropdown = Backbone.View.extend({
 
-	tagName: 'select',
-	id: 'category_id',
+	// tagName: 'select',
+	// id: 'category_id',
+
+	template: _.template([
+		"<select id='category_id'>",
+			"<% categories.each(function(category) { %>",
+				"<%= categoryTemplate(category) %>",
+			"<% }); %>",
+		"</select>"
+	].join('')),
+
+	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
+
+	categoryTemplate: function(category) {
+		return '<option value=' + category.get('id') + '>' + category.get('name') + '</option>';
+	},
 
 	initialize: function() {
 		this.collection.on('add', this.addOne, this);
@@ -60,29 +74,18 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 	},
 
 	render: function() {
-		this.$el.attr('name', 'category_id');
-		this.collection.each(this.addOne, this);
+
+		var html = this.template({
+			categories: this.collection,
+			categoryTemplate: this.categoryTemplate
+		});
+
+		this.$el.append(html);
+
 		return this;
 	},
 
-	addOne: function(category) {
-		var categoryDropdown = new App.Views.CategoryDropdown({ model: category });
-		this.$el.prepend(categoryDropdown.render().el);
-	}
 });
-
-App.Views.CategoryDropdown = Backbone.View.extend({
-	tagName: 'option',
-
-
-	template: _.template('<%= name %>'),
-
-	render: function() {
-		this.$el.attr('value', this.model.get('id'));
-		this.$el.html(this.template(this.model.toJSON()));
-		return this;
-	}
-})
 
 App.Views.Category = Backbone.View.extend({
 	tagName: 'tr',
