@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://wordoftheday.herokuapp.com',
+	'url' => 'http://ios14.herokuapp.com/',
 
 	/*
 	|--------------------------------------------------------------------------
