@@ -60,7 +60,7 @@ class MwordsController extends ApiController {
 		), array(
 			'user_id' => 'numeric',
 			'word' => 'alpha',
-			'answer' => 'alpha',
+			'answer' => 'alpha_spaces',
 			'category_id' => 'numeric'
 		));
 
@@ -73,7 +73,7 @@ class MwordsController extends ApiController {
 			'word' => Input::get('word'),
 			'answer' => Input::get('answer'),
 			'status' => 'waiting',
-			'category_id' => Input::get('categoru_id')
+			'category_id' => Input::get('category_id')
 		));
 
 		if ($word) {
