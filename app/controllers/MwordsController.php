@@ -20,8 +20,18 @@ class MwordsController extends ApiController {
 
 		if ($user) {
 			$words = $user->words;
-			return $this->respond($this->transform_words($words));
-			// return $this->respond($words);
+			// @toDo rewrite!
+			$render = array();
+			foreach ($words as $word) {
+				$r_word = array(
+					'category_id' => $word['category_id'],
+					'word' => $word['word'],
+					'answer' => $word['answer'],
+					'status' => $word['status']
+				);
+				array_push($render, $r_word);
+			}
+			return $this->respond($render);
 		}
 
 	}
