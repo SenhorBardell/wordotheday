@@ -20,8 +20,8 @@ class MwordsController extends ApiController {
 
 		if ($user) {
 			$words = $user->words;
-			// return $this->respond($this->transform_words($words));
-			return $this->respond($words);
+			return $this->respond($this->transform_words($words));
+			// return $this->respond($words);
 		}
 
 	}
@@ -44,12 +44,14 @@ class MwordsController extends ApiController {
 		$validator = Validator::make(array(
 			'user_id' => $user_id,
 			'word' => Input::get('word'),
-			'answer' => Input::get('answer') 
+			'answer' => Input::get('answer'),
+			'category_id' => Input::get('category_id') 
 
 		), array(
 			'user_id' => 'numeric',
 			'word' => 'alpha',
-			'answer' => 'alpha'
+			'answer' => 'alpha',
+			'category_id' => 'numeric'
 		));
 
 		if ($validator->fails()) {
@@ -60,7 +62,8 @@ class MwordsController extends ApiController {
 			'user_id' => $user_id,
 			'word' => Input::get('word'),
 			'answer' => Input::get('answer'),
-			'status' => 'waiting'
+			'status' => 'waiting',
+			'category_id' => Input::get('categoru_id')
 		));
 
 		if ($word) {
@@ -209,7 +212,8 @@ class MwordsController extends ApiController {
 			'user_id' => $word['user_id'],
 			'word' => $word['word'],
 			'answer' => $word['answer'],
-			'status' => $word['status']
+			'status' => $word['status'],
+			'category_id' => $word['category_id']
 		];
 	}
 
