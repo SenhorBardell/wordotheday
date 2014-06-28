@@ -1,6 +1,17 @@
 <?php
 
+use Helpers\Transformers\WordTransformer;
+
 class MwordsController extends ApiController {
+
+	/**
+	* @var Bardell\Transformers\WordCardTransformer
+	*/
+	protected $wordTransformer;
+
+	function __construct(WordTransformer $wordTransformer) {
+		$this->wordTransformer = $wordTransformer;
+	}
 
 	public function show_all() {
 		$words = Mword::where('status', '=', 'waiting')->get();
@@ -12,28 +23,20 @@ class MwordsController extends ApiController {
 
 		$validator = $this->validate_id($user_id);
 
-		if ($validator->fails()) {
+		if ($validator->fails())
 			return $this->respondInsufficientPrivileges($validator->messages()->all());
-		}
 
 		$user = User::find($user_id);
 
-		if ($user) {
-			$words = $user->words;
-			// @toDo rewrite!
-			$render = array();
-			foreach ($words as $word) {
-				$r_word = array(
-					'category_id' => $word['category_id'],
-					'word' => $word['word'],
-					'answer' => $word['answer'],
-					'status' => $word['status']
-				);
-				array_push($render, $r_word);
-			}
-			return $this->respond($render);
-		}
+		if (!$user)
+			return $this->respondNotFound('User not found');
 
+		$words = $user->words;
+
+		if ($words)
+			return $this->respond($this->wordTransformer->transformWords($words));
+
+		return $this->respondNotFound('No words');
 	}
 
 	public function show($word_id) {
@@ -59,7 +62,7 @@ class MwordsController extends ApiController {
 
 		), array(
 			'user_id' => 'numeric',
-			'word' => 'alpha',
+			'word' => 'alpha_spaces',
 			'answer' => 'alpha_spaces',
 			'category_id' => 'numeric'
 		));
@@ -187,6 +190,24 @@ class MwordsController extends ApiController {
 	}
 
 	public function create_word($word, $category_id) {
+
+		$validator = Validator::make(array(
+			'user_id' => $user_id,
+			'word' => Input::get('word'),
+			'answer' => Input::get('answer'),
+			'category_id' => Input::get('category_id') 
+
+		), array(
+			'user_id' => 'numeric',
+			'word' => 'alpha_spaces',
+			'answer' => 'alpha_spaces',
+			'category_id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+		
 		$newWord = WordCard::create(array(
 			'word' => $word->word,
 			'answer' => $word->answer,

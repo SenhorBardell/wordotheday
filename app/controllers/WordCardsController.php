@@ -1,6 +1,5 @@
 <?php
 
-// use Bardell\Transformers\WordCardTransformer;
 use Helpers\Transformers\WordTransformer;
 
 class WordCardsController extends ApiController {

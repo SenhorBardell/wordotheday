@@ -14,7 +14,7 @@ class AddCategoryIdColumnToMwordsTable extends Migration {
 	{
 		Schema::table('mwords', function(Blueprint $table)
 		{
-			$table->integer('category_id');
+			$table->integer('category_id')->nullable();
 		});
 	}
 
