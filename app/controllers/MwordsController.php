@@ -51,22 +51,22 @@ class MwordsController extends ApiController {
 	}
 
 	public function add_word($user_id) {
-		$validator = Validator::make(array(
-			'user_id' => $user_id,
-			'word' => Input::get('word'),
-			'answer' => Input::get('answer'),
-			'category_id' => Input::get('category_id') 
+		// $validator = Validator::make(array(
+		// 	'user_id' => $user_id,
+		// 	'word' => Input::get('word'),
+		// 	'answer' => Input::get('answer'),
+		// 	'category_id' => Input::get('category_id') 
 
-		), array(
-			'user_id' => 'numeric',
-			'word' => 'alpha',
-			'answer' => 'alpha_spaces',
-			'category_id' => 'numeric'
-		));
+		// ), array(
+		// 	'user_id' => 'numeric',
+		// 	'word' => 'alpha',
+		// 	'answer' => 'alpha_spaces',
+		// 	'category_id' => 'numeric'
+		// ));
 
-		if ($validator->fails()) {
-			return $this->respondInsufficientPrivileges($validator->messages()->all());
-		}
+		// if ($validator->fails()) {
+		// 	return $this->respondInsufficientPrivileges($validator->messages()->all());
+		// }
 
 		$word = Mword::create(array(
 			'user_id' => $user_id,
