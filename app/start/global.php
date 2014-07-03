@@ -103,3 +103,11 @@ Category::creating(function($category) {
 Category::updating(function($category) {
 	$category->words = count($category->wordcards);
 });
+
+/*
+ * Custom validator
+ */
+Validator::extend('alpha_spaces', function($attribute, $value)
+{
+    return preg_match('/^[\pL\s.]+$/u', $value);
+});

@@ -44,9 +44,7 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::get('moderate/words', 'MwordsController@show_all');
 	Route::get('moderate/words/{word_id}', 'MwordsController@show');
 	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
-	// Route::patch('moderate/words/{word_id}', 'MwordsController@update');
 
-	// Route::get('moderate/words/{word_id}/accept', 'MwordsController@accept');
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
 
 	Route::resource('users', 'UsersController');

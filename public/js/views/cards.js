@@ -149,8 +149,8 @@ App.Views.AddCard = Backbone.View.extend({
 
 	cancel: function(e) {
 		e.preventDefault(e);
-		this.unbind();
 		this.remove();
+		history.back();
 	},
 
 	clearForm: function() {

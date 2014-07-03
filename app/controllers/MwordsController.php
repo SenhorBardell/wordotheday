@@ -1,6 +1,17 @@
 <?php
 
+use Helpers\Transformers\WordTransformer;
+
 class MwordsController extends ApiController {
+
+	/**
+	* @var Bardell\Transformers\WordCardTransformer
+	*/
+	protected $wordTransformer;
+
+	function __construct(WordTransformer $wordTransformer) {
+		$this->wordTransformer = $wordTransformer;
+	}
 
 	public function show_all() {
 		$words = Mword::where('status', '=', 'waiting')->get();
@@ -12,18 +23,20 @@ class MwordsController extends ApiController {
 
 		$validator = $this->validate_id($user_id);
 
-		if ($validator->fails()) {
+		if ($validator->fails())
 			return $this->respondInsufficientPrivileges($validator->messages()->all());
-		}
 
 		$user = User::find($user_id);
 
-		if ($user) {
-			$words = $user->words;
-			return $this->respond($this->transform_words($words));
-			// return $this->respond($words);
-		}
+		if (!$user)
+			return $this->respondNotFound('User not found');
 
+		$words = $user->words;
+
+		if ($words)
+			return $this->respond($this->wordTransformer->transformWords($words));
+
+		return $this->respondNotFound('No words');
 	}
 
 	public function show($word_id) {
@@ -44,12 +57,14 @@ class MwordsController extends ApiController {
 		$validator = Validator::make(array(
 			'user_id' => $user_id,
 			'word' => Input::get('word'),
-			'answer' => Input::get('answer') 
+			'answer' => Input::get('answer'),
+			'category_id' => Input::get('category_id') 
 
 		), array(
 			'user_id' => 'numeric',
-			'word' => 'alpha',
-			'answer' => 'alpha'
+			'word' => 'alpha_spaces',
+			'answer' => 'alpha_spaces',
+			'category_id' => 'numeric'
 		));
 
 		if ($validator->fails()) {
@@ -60,7 +75,8 @@ class MwordsController extends ApiController {
 			'user_id' => $user_id,
 			'word' => Input::get('word'),
 			'answer' => Input::get('answer'),
-			'status' => 'waiting'
+			'status' => 'waiting',
+			'category_id' => Input::get('category_id')
 		));
 
 		if ($word) {
@@ -174,6 +190,24 @@ class MwordsController extends ApiController {
 	}
 
 	public function create_word($word, $category_id) {
+
+		$validator = Validator::make(array(
+			'user_id' => $user_id,
+			'word' => Input::get('word'),
+			'answer' => Input::get('answer'),
+			'category_id' => Input::get('category_id') 
+
+		), array(
+			'user_id' => 'numeric',
+			'word' => 'alpha_spaces',
+			'answer' => 'alpha_spaces',
+			'category_id' => 'numeric'
+		));
+
+		if ($validator->fails()) {
+			return $this->respondInsufficientPrivileges($validator->messages()->all());
+		}
+		
 		$newWord = WordCard::create(array(
 			'word' => $word->word,
 			'answer' => $word->answer,
@@ -209,7 +243,8 @@ class MwordsController extends ApiController {
 			'user_id' => $word['user_id'],
 			'word' => $word['word'],
 			'answer' => $word['answer'],
-			'status' => $word['status']
+			'status' => $word['status'],
+			'category_id' => $word['category_id']
 		];
 	}
 
