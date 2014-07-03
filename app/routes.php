@@ -44,9 +44,7 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::get('moderate/words', 'MwordsController@show_all');
 	Route::get('moderate/words/{word_id}', 'MwordsController@show');
 	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
-	// Route::patch('moderate/words/{word_id}', 'MwordsController@update');
 
-	// Route::get('moderate/words/{word_id}/accept', 'MwordsController@accept');
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
 
 	Route::resource('users', 'UsersController');
@@ -65,7 +63,7 @@ Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('user/{user_id}/addword', 'MwordsController@add_word');
-	Route::post('user/{word_id}/removeword', 'MwordsController@remove_word');
+	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 
 	Route::resource('categories', 'CategoriesController');
 	Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');

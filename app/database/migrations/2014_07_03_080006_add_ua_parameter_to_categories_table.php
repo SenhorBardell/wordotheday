@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class AddCategoryIdColumnToMwordsTable extends Migration {
+class AddUaParameterToCategoriesTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,9 +12,9 @@ class AddCategoryIdColumnToMwordsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::table('mwords', function(Blueprint $table)
+		Schema::table('categories', function(Blueprint $table)
 		{
-			$table->integer('category_id')->nullable();
+			$table->string('ua_parameter');
 		});
 	}
 
@@ -26,9 +26,9 @@ class AddCategoryIdColumnToMwordsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::table('mwords', function(Blueprint $table)
+		Schema::table('categories', function(Blueprint $table)
 		{
-			$table->dropColumn('category_id');
+			$table->dropColumn('ua_parameter');
 		});
 	}
 

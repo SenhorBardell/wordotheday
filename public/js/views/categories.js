@@ -130,6 +130,7 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.name = $('#name');
 		this.subscription_price = $('#subscription_price');
 		this.test_price = $('#test_price');
+		this.ua_parameter = $('#ua_parameter');
 	},
 
 	events: {
@@ -143,7 +144,8 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.collection.create({
 			name: this.name.val(),
 			subscription_price: this.subscription_price.val(),
-			test_price: this.test_price.val()
+			test_price: this.test_price.val(),
+			ua_parameter: this.ua_parameter.val()
 		}, {wait: true });
 
 		this.clearForm();
@@ -164,6 +166,7 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.name.val('');
 		this.subscription_price.val('');
 		this.test_price.val('');
+		this.ua_parameter.val('');
 
 	}
 });
@@ -178,6 +181,7 @@ App.Views.EditCategory = Backbone.View.extend({
 		this.name = this.form.find('#edit_name');
 		this.subscription_price = this.form.find('#edit_subscription_price');
 		this.test_price = this.form.find('#edit_test_price');
+		this.ua_parameter = this.form.find('#edit_ua_parameter');
 	},
 
 	events: {
@@ -191,7 +195,8 @@ App.Views.EditCategory = Backbone.View.extend({
 		this.model.save({
 			name: this.name.val(),
 			subscription_price: this.subscription_price.val(),
-			test_price: this.test_price.val()
+			test_price: this.test_price.val(),
+			ua_parameter: this.ua_parameter.val()
 		}, {wait: true});
 
 		this.remove();
