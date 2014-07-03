@@ -65,7 +65,7 @@ Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('user/{user_id}/addword', 'MwordsController@add_word');
-	Route::post('user/{word_id}/removeword', 'MwordsController@remove_word');
+	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 
 	Route::resource('categories', 'CategoriesController');
 	Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');

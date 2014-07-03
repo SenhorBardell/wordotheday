@@ -123,7 +123,7 @@ this["window"]["App"]["JST"]["category/add"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<form class="pure-form" id="addCategory">\n\t<div>\n\t\t<label for="name">Название</label>\n\t\t<input type="text" id="name" name="name">\n\t</div>\n\n\t<div>\n\t\t<label for="subscription_price">Цена подписки</label>\n\t\t<input type="subscription_price" id="subscription_price" name="subscription_price">\n\t</div>\n\n\t<div>\n\t\t<label for="test_price">Цена теста</label>\n\t\t<input type="test_price" id="test_price" name="test_price">\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>';
+__p += '<form class="pure-form" id="addCategory">\n\t<div>\n\t\t<label for="name">Название</label>\n\t\t<input type="text" id="name" name="name">\n\t</div>\n\n\t<div>\n\t\t<label for="subscription_price">Цена подписки</label>\n\t\t<input type="text" id="subscription_price" name="subscription_price">\n\t</div>\n\n\t<div>\n\t\t<label for="test_price">Цена теста</label>\n\t\t<input type="text" id="test_price" name="test_price">\n\t</div>\n\n\t<div>\n\t\t<label for="ua_parameter">UA Parameter</label>\n\t\t<input type="text" id="ua_parameter" name="ua_parameter">\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>';
 
 }
 return __p
@@ -143,12 +143,14 @@ this["window"]["App"]["JST"]["category/edit"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<form id="editCategory">\n\t<div>\n\t\t<label for="edit_name">Название</label>\n\t\t<input type="text" id="edit_name" name="edit_name" value="' +
+__p += '<form id="editCategory">\n\t<div>\n\t\t<label for="edit_name">Название</label>\n\t\t<input type="text" id="edit_name" name="name" value="' +
 ((__t = ( name )) == null ? '' : __t) +
-'">\n\t</div>\n\n\t<div>\n\t\t<label for="edit_subscription_price">Цена подписки</label>\n\t\t<input type="edit_subscription_price" id="edit_subscription_price" name="subscription_price" value="' +
+'">\n\t</div>\n\n\t<div>\n\t\t<label for="subscription_price">Цена подписки</label>\n\t\t<input type="text" id="edit_subscription_price" name="subscription_price" value="' +
 ((__t = ( subscription_price )) == null ? '' : __t) +
-'">\n\t</div>\n\n\t<div>\n\t\t<label for="edit_testa_price">Цена теста</label>\n\t\t<input type="edit_test_price" id="edit_test_price" name="edit_test_price" value="' +
+'">\n\t</div>\n\n\t<div>\n\t\t<label for="testa_price">Цена теста</label>\n\t\t<input type="text" id="edit_test_price" name="test_price" value="' +
 ((__t = ( test_price )) == null ? '' : __t) +
+'">\n\t</div>\n\n\t<div>\n\t\t<label for="ua_parameter">UA Parameter</label>\n\t\t<input type="text" id="edit_ua_parameter" name="ua_parameter" value="' +
+((__t = ( ua_parameter )) == null ? '' : __t) +
 '">\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Редактировать">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>';
 
 }
@@ -159,7 +161,7 @@ this["window"]["App"]["JST"]["category/layout"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<h2 class="content-header">Категории<a href="/category/add"><img src="img/add.png"></a></h2>\n\n<table>\n\t<thead>\n\t\t<tr>\n\t\t\t<td>ID</td>\n\t\t\t<td>Название</td>\n\t\t\t<td>Слов</td>\n\t\t\t<td colspan="3" class="options">Опции</td>\n\t\t</tr>\n\t</thead>\n</table>';
+__p += '<h2 class="content-header">Категории<a href="/category/add"><img src="img/add.png"></a></h2>\n\n<table>\n\t<thead>\n\t\t<tr>\n\t\t\t<td>ID</td>\n\t\t\t<td>Название</td>\n\t\t\t<td>Слов</td>\n\t\t\t<td>UA Parameter</td>\n\t\t\t<td colspan="3" class="options">Опции</td>\n\t\t</tr>\n\t</thead>\n</table>';
 
 }
 return __p
@@ -175,13 +177,15 @@ __p += '<td class="id">' +
 ((__t = ( name )) == null ? '' : __t) +
 '</td>\n<td>' +
 ((__t = ( words )) == null ? '' : __t) +
+'</td>\n<td>' +
+((__t = ( ua_parameter )) == null ? '' : __t) +
 '</td>\n<td class="edit-c"><a href="/category/' +
 ((__t = ( id )) == null ? '' : __t) +
-'/edit" class="edit"><img src="img/edit.png"></a></td>\n<td class="delete-c"><a href="/category/' +
+'/edit" class="edit"><img src="/img/edit.png"></a></td>\n<td class="delete-c"><a href="/category/' +
 ((__t = ( id )) == null ? '' : __t) +
-'" class="delete"><img src="img/delete.png"></a></td>\n<td class="words-c"><a href="/category/' +
+'" class="delete"><img src="/img/delete.png"></a></td>\n<td class="words-c"><a href="/category/' +
 ((__t = ( id )) == null ? '' : __t) +
-'/words" class="words"><img src="img/right.png"></a></td>';
+'/words" class="words"><img src="/img/right.png"></a></td>';
 
 }
 return __p
@@ -738,6 +742,7 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.name = $('#name');
 		this.subscription_price = $('#subscription_price');
 		this.test_price = $('#test_price');
+		this.ua_parameter = $('#ua_parameter');
 	},
 
 	events: {
@@ -751,7 +756,8 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.collection.create({
 			name: this.name.val(),
 			subscription_price: this.subscription_price.val(),
-			test_price: this.test_price.val()
+			test_price: this.test_price.val(),
+			ua_parameter: this.ua_parameter.val()
 		}, {wait: true });
 
 		this.clearForm();
@@ -772,6 +778,7 @@ App.Views.AddCategory = Backbone.View.extend({
 		this.name.val('');
 		this.subscription_price.val('');
 		this.test_price.val('');
+		this.ua_parameter.val('');
 
 	}
 });
@@ -786,6 +793,7 @@ App.Views.EditCategory = Backbone.View.extend({
 		this.name = this.form.find('#edit_name');
 		this.subscription_price = this.form.find('#edit_subscription_price');
 		this.test_price = this.form.find('#edit_test_price');
+		this.ua_parameter = this.form.find('#edit_ua_parameter');
 	},
 
 	events: {
@@ -799,7 +807,8 @@ App.Views.EditCategory = Backbone.View.extend({
 		this.model.save({
 			name: this.name.val(),
 			subscription_price: this.subscription_price.val(),
-			test_price: this.test_price.val()
+			test_price: this.test_price.val(),
+			ua_parameter: this.ua_parameter.val()
 		}, {wait: true});
 
 		this.remove();

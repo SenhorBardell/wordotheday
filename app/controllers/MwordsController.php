@@ -20,8 +20,8 @@ class MwordsController extends ApiController {
 
 		if ($user) {
 			$words = $user->words;
-			// return $this->respond($this->transform_words($words));
-			return $this->respond($words);
+			return $this->respond($this->transform_words($words));
+			// return $this->respond($words);
 		}
 
 	}

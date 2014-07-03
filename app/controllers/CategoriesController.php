@@ -26,6 +26,7 @@ class CategoriesController extends ApiController {
 			'name' => $input['name'],
 			'subscription_price' => $input['subscription_price'],
 			'test_price' => $input['test_price'],
+			'ua_parameter' => $input['ua_parameter']
 		));
 
 		if ($category) return $this->respond($category);
@@ -71,6 +72,7 @@ class CategoriesController extends ApiController {
 		$category->name = $input['name'];
 		$category->subscription_price = $input['subscription_price'];
 		$category->test_price = $input['test_price'];
+		$category->ua_parameter = $input['ua_parameter'];
 		$category->update_amount();
 		if ($category->save()) {
 			return $this->respond($this->transform($category));
@@ -103,7 +105,8 @@ class CategoriesController extends ApiController {
 			'subscription_price' => $category['subscription_price'],
 			'id' => $category['id'],
 			'test_price' => $category['test_price'],
-			'words' => $category['words']
+			'words' => $category['words'],
+			'ua_parameter' => $category['ua_parameter']
 		];
 	}
 
