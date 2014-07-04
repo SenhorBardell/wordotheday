@@ -66,13 +66,23 @@ class UsersController extends ApiController {
 	{
 		$validation = User::validate(Input::all());
 		if ($validation->passes()) {
-			User::create(array(
+			$user = User::create(array(
 				'username' => Input::get('username'),
-				'password' => Input::get('password'),
-				'balance' => Input::has('balance') ? Input::get('balance') : 0
+				'password' => Hash::make(Input::get('password')),
+				'balance' => Input::has('balance') ? Input::get('balance') : 0,
+				'overal_standing' => 0,
+				'max_result' => 0,
 			));
 
-			$this->respond('ok');
+			if ($user)
+				return $this->respond(array(
+					'username' => $user['username'],
+					'max_result' => $user['max_result'],
+					'overal_standing' => $user['overal_standing'],
+					'balance' => $user['balance'],
+					'id' => $user['id'],
+					'password' => $user['password']
+				));
 		}
 
 		if ($validation->fails()) {
