@@ -4,13 +4,13 @@
 
 	<h2>Доступные команды</h2>
 
-	<h3>Аутефикация</h3>
+	<h3>Аутентификация</h3>
 
 	<dl>
 		<dt>POST <strong>/api</strong></dt>
-			<dd>Тестовая аутефикация по токену. Принимает пост запрос с параметром auth. Тестовый запрос будет ввиде auth=test.</dd>
+			<dd>Тестовая аутефикация по токену. Принимает пост запрос с параметром auth. Тестовый запрос будет ввиде auth=hashed_password.</dd>
 		<dt>GET <strong>/api</strong></dt>
-			<dd>GET Запрос на всех пользователей. На данный момент все запросы идут без аутефикации. Посему просто GET запрос. В последствиии все GET запросы будут запросами POST с токеном аутефикации.</dd>
+			<dd>Список апи</dd>
 	</dl>
 
 	<h3>Слова</h3>
@@ -35,19 +35,19 @@
 		<dt>GET <strong>/api/users</strong></dt>
 			<dd>Получить всех пользователей</dd>
 
-		<dt>GET <strong>/api/users/{:user}</strong></dt>
+		<dt>GET <strong>/api/users/{:user_id}</strong></dt>
 			<dd>Получить пользователя по id</dd>
 
-		<dt>PUT <strong>/api/users/{:user}</strong></dt>
+		<dt>PUT <strong>/api/users/{:user_id}</strong></dt>
 			<dd>Отредактировать пользователя по id. Принимает username=string, password=string, balance=integer</dd>
 
-		<dt>DELETE <strong>/api/users/{:user}</strong></dt>
+		<dt>DELETE <strong>/api/users/{:user_id}</strong></dt>
 			<dd>Удалить пользователя по id</dd>
 
-		<dt>GET <strong>/api/user/{:user}/words</strong></dt>
+		<dt>GET <strong>/api/user/{:user_id}/words</strong></dt>
 			<dd>Показать все слова добавленные пользователем на модерацию</dd>
 
-		<dt>POST <strong>/api/user/{:user}/addword</strong></dt>
+		<dt>POST <strong>/api/user/{:user_id}/addword</strong></dt>
 			<dd>Добавить слово на модерацию. Принимает word=string, answer=string</dd>
 
 		<dt>POST <strong>/api/user/{:word}/removeword</strong></dt>
@@ -72,30 +72,30 @@
 	</dl>
 
 	<h3>Подписки</h3>
+	Аутентификация auth=hashed_password
 
 	<dl>
-		<dt>POST <strong>/api/user/{:user}/subscribe</strong></dt>
+		<dt>POST <strong>/api/user/{:user_id}/subscribe</strong></dt>
 			<dd>Подписать пользователя на категорию. Принимает category_id=integer</dd>
 
-		<dt>GET <strong>/api/user/{:user}/subscriptions</strong></dt>
+		<dt>GET <strong>/api/user/{:user_id}/subscriptions</strong></dt>
 			<dd>Получить список подписанных категорий</dd>
 
-		<dt>POST <strong>/api/user/{:user}/unsubscribe</strong></dt>
+		<dt>POST <strong>/api/user/{:user_id}/unsubscribe</strong></dt>
 			<dd>Отписать пользователя от категории category_id=integer</dd>
 	</dl>
 
 	<h3>Устройства</h3>
 
 	<dl>
-		<dt>GET <strong>/api/user/{:user}/devices</strong></dt>
+		<dt>GET <strong>/api/user/{:user_id}/devices</strong></dt>
 			<dd>Получить все устройства пользователя</dd>
 
-		<dt>POST <strong>/api/user/{:user}/add_device</strong></dt>
+		<dt>POST <strong>/api/user/{:user_id}/add_device</strong></dt>
 			<dd>Добавить устройство к пользователю. Принимает device_id</dd>
 
-		<dt>POST <strong>/api/user/{:user}/remove_device</strong></dt>
+		<dt>POST <strong>/api/user/{:user_id}/remove_device</strong></dt>
 			<dd>Удалить устройство у пользователя. Принимает device_id=integer</dd>
-
 	</dl>
 
 	<h3>Категории</h3>
@@ -109,8 +109,6 @@
 
 		<dt>DELETE <strong>/api/category/{:category}</strong></dt>
 			<dd>Удаляет категорию по id</dd>
-
-		<dt>Удаление и редактирование категорий - апи написано, функционал представлен в админке</dt>
 	</dl>
 
 	<h3>Тест</h3>
@@ -120,13 +118,13 @@
 			<dd>Начать тест, принимает category=id user=id.</dd>
 			<dd>Возвращает, balance, cards{answer, category_id, id, word}</dd>
 
-		<dt>POST <strong>/api/test/result</strong></dt>
-			<dd>Принимает user=id</dd>
-			<dd>Возвращает status, balance</dd>
-
 		<dt>POST <strong>/api/user/{user_id}/addlife</strong></dt>
 			<dd>Принимает user=id</dd>
 			<dd>Возвращает пользователя {balance, id, max_result, overal_standing, username}</dd>
+
+		<dt>POST <strong>/api/test/result</strong></dt>
+			<dd>Принимает user=id</dd>
+			<dd>Возвращает status, balance</dd>
 
 		<dt>GET <strong>/api/randomwords</strong></dt>
 			<dd>Получить рандомно 20 слов из каждой категории</dd>

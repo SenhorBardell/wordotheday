@@ -34,7 +34,7 @@ class MwordsController extends ApiController {
 		$words = $user->words;
 
 		if ($words)
-			return $this->respond($this->wordTransformer->transformWords($words));
+			return $this->respond($this->transform_words($words));
 
 		return $this->respondNotFound('No words');
 	}

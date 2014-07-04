@@ -28,13 +28,11 @@ Route::get('menu', function() {
 Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('/', function() {
-		return Response::json([
-			'api is running. Use post request to try to auth.'
-		], 200);
+		return Response::json([ 'api is running. Use post request to try to auth.' ], 200);
 	});
 
 	Route::post('/', array('before' => 'auth', function() {
-		return Response::json(array('api is running'), 200);
+		return Response::json(['api is running'], 200);
 	}));
 
 	Route::resource('words', 'WordCardsController');
@@ -51,24 +49,27 @@ Route::group(array('prefix' => 'api'), function() {
 
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
-	Route::post('user/{user_id}/addlife', 'UsersController@addlife');
+	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
+		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
+		Route::post('{user_id}/unsubscribe', 'UsersController@unsubscribe');
+		Route::post('{user_id}/subscriptions', 'UsersController@subscriptions');
 
-	Route::post('user/{user_id}/subscribe/', 'UsersController@subscribe');
-	Route::post('user/{user_id}/unsubscribe/', 'UsersController@unsubscribe');
-	Route::get('user/{user_id}/subscriptions', 'UsersController@subscriptions');
+		Route::post('{user_id}/addlife', 'UsersController@addlife');
+		Route::post('{user_id}/addword', 'MwordsController@add_word');
+		Route::post('{user_id}/teststart', 'TestsController@start');
+	});
 
-	Route::get('user/{user_id}/devices', 'UsersController@devices');
-	Route::post('user/{user_id}/adddevice', 'UsersController@add_device');
-	Route::post('user/{user_id}/removedevice', 'UsersController@remove_device');
+	// Route::get('user/{user_id}/devices', 'UsersController@devices');
+	// Route::post('user/{user_id}/adddevice', 'UsersController@add_device');
+	// Route::post('user/{user_id}/removedevice', 'UsersController@remove_device');
 
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
-	Route::post('user/{user_id}/addword', 'MwordsController@add_word');
+	
 	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 
 	Route::resource('categories', 'CategoriesController');
 	Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');
 
-	Route::post('test/start', 'TestsController@start');
 	Route::post('test/result', 'TestsController@result');
 
 	Route::resource('settings', 'SettingsController');
