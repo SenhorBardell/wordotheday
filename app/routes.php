@@ -28,25 +28,41 @@ Route::get('menu', function() {
 Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('/', function() {
-		return Response::json([ 'api is running. Use post request to try to auth.' ], 200);
+		$url = URL::to('/').'api';
+		return Response::json(array(
+				'status' => $url,
+				'words' => $url.'/words',
+				'word' => $url.'/words/{id}',
+				'randomwords' => $url.'/randomwords',
+				'moderate_words' => $url.'/moderate/words',
+				'moderate_word' => $url.'/moderate/words/{id}',
+				'user_words' => $url.'/user/{id}/words',
+				'categories' => $url.'/categories',
+				'category' => $url.'/category/{id}',
+				'settings' => $url.'/settings'
+			), 200);
 	});
 
 	Route::post('/', array('before' => 'auth', function() {
-		return Response::json(['api is running'], 200);
+		return Response::json(['Authenticated'], 200);
 	}));
 
+	Route::post('test/result', 'TestsController@result');
 	Route::resource('words', 'WordCardsController');
-
 	Route::get('randomwords', 'WordCardsController@randomwords');
+
+	/* Moderation */
 
 	Route::get('moderate/words', 'MwordsController@show_all');
 	Route::get('moderate/words/{word_id}', 'MwordsController@show');
 	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
-
+	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
 
-	Route::resource('users', 'UsersController');
+	/* Users */
 
+	Route::resource('users', 'UsersController');
+	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
 	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
@@ -59,18 +75,12 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::post('{user_id}/teststart', 'TestsController@start');
 	});
 
-	// Route::get('user/{user_id}/devices', 'UsersController@devices');
-	// Route::post('user/{user_id}/adddevice', 'UsersController@add_device');
-	// Route::post('user/{user_id}/removedevice', 'UsersController@remove_device');
-
-	Route::get('user/{user_id}/words', 'MwordsController@show_words');
-	
-	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
+	/* Category */
 
 	Route::resource('categories', 'CategoriesController');
 	Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');
 
-	Route::post('test/result', 'TestsController@result');
+	/* Settings */
 
 	Route::resource('settings', 'SettingsController');
 	Route::get('settings', 'SettingsController@index');

@@ -35,8 +35,10 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	$user = User::where('password', Input::get('auth'))->first();
-	if ($user->isEmpty) return Response::json(array('status' => 'unauthorized'));
+	if (Input::get('auth') != '123')
+		return Response::json(array('status' => 'unauthorized'));
+	// $user = User::where('password', Input::get('auth'))->first();
+	// if ($user->isEmpty) return Response::json(array('status' => 'unauthorized'));
 });
 
 

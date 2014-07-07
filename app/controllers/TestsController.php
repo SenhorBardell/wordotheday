@@ -60,9 +60,9 @@ class TestsController extends ApiController {
 	// 	return Response::json($response);
 	// }
 
-	public function start() {
+	public function start($user_id) {
 		$category = Category::find(Input::get('category'));
-		$user = User::find(Input::get('user'));
+		$user = User::find(Input::get($user_id));
 
 		$balance = $user->balance;
 		$words = $category->wordcards->take(20)->toArray();
