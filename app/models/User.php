@@ -19,8 +19,7 @@ class User extends \Eloquent {
 	public static function validate($input) {
 		$rules = array(
 			'username' => 'Required',
-			'balance' => 'Integer',
-			'password' => 'Required'
+			'balance' => 'Integer'
 		);
 
 		return Validator::make($input, $rules);
