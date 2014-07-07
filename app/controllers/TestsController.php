@@ -62,10 +62,15 @@ class TestsController extends ApiController {
 
 	public function start($user_id) {
 		$category = Category::find(Input::get('category'));
-		$user = User::find(Input::get($user_id));
+		$offset = Input::has('page') ? Input::get('page') : 1;
+		$user = User::find($user_id);
 
-		$balance = $user->balance;
-		$words = $category->wordcards->take(20)->toArray();
+		if (count($user) == 0)
+			return $this->respondNotFound('User not found');
+
+		$balance = $user['balance'];
+		$words = $category->wordcards->take(20)->skip($offset * 20)->toArray();
+		shuffle($words);
 
 		if ($balance > 0) {
 			$response['status'] = 'started';
