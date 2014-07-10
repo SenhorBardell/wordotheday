@@ -12,7 +12,7 @@ class Category extends \Eloquent {
 	}
 
 	public function sentWordcards() {
-		return $this->hasMany('SentWordCard');
+		return $this->belongsToMany('WordCard', 'sent_word_cards', 'word_id', 'category_id');
 	}
 
 }

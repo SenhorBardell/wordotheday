@@ -31,6 +31,36 @@ class UsersController extends ApiController {
 
 	}
 
+	/**
+	 * Ugly and wrong, but thi will get the word when user open an app for a first time
+	 * 
+	 * @param  $id user_id
+	 * @return Response
+	 */
+	public function firstword($id) {
+		$user = User::find($id);
+		$word = WordCard::find($user->word_id);
+		return $this->respond($word);
+	}
+
+	/**
+	 * Daily bonus
+	 * 
+	 * @param  $id
+	 * @return Response
+	 */
+	public function getbonus($id) {
+		$user = User::find($id);
+
+		if ($user->word_id == '0')
+			return $this->respondInsufficientPrivileges('User has already got bonus');
+
+		$user->word_id = 0;
+		$user->balance = $user->balance + Setting::first()->daily_bonus;
+		$user->save();
+		return $this->respond($this->transform($user));
+	}
+
 	public function addlife($user_id) {
 		
 		$validator = Validator::make(array(
@@ -65,10 +95,23 @@ class UsersController extends ApiController {
 	public function store()
 	{
 		$validation = User::validate(Input::all());
-		if ($validation->passes()) {
+
+		if ($validation->fails())
+		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
+
+		$oldUser = User::where('username', Input::get('username'))->first();
+
+		if ($oldUser) {
+
+			$oldUser->password = Hash::make(Input::get('username'));
+
+			return $oldUser;
+
+		} else {
 			$user = User::create(array(
 				'username' => Input::get('username'),
 				'password' => Hash::make(Input::get('username')),
+				'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
 				// 'balance' => Input::has('balance') ? Input::get('balance') : 0,
 				// 'overal_standing' => 0,
 				// 'max_result' => 0,
@@ -81,13 +124,10 @@ class UsersController extends ApiController {
 					'overal_standing' => $user['overal_standing'],
 					'balance' => $user['balance'],
 					'id' => $user['id'],
-					'password' => $user['password']
+					'password' => $user['password'],
+					'word_id' => $user['word_id']
 				));
 		}
-
-		if ($validation->fails()) {
-		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
-		 }
 		
 	}
 
@@ -362,7 +402,8 @@ class UsersController extends ApiController {
 			'max_result' => $user['max_result'],
 			'overal_standing' => $user['overal_standing'],
 			'balance' => $user['balance'],
-			'id' => $user['id']
+			'id' => $user['id'],
+			'word_id' => $user['word_id']
 		];
 	}
 

@@ -4,22 +4,22 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard</title>
-	<link rel="stylesheet" href="css/pure-min.css">
-	<link rel="stylesheet" href="css/side-menu.css">
+	<link rel="stylesheet" href="/css/pure-min.css">
+	<link rel="stylesheet" href="/css/side-menu.css">
 </head>
 <body>
 	<div id="layout">
 
 	</div>
 
-	<script src="js/lib/jquery-1.11.1.min.js"></script>
-	<script src="js/lib/jquery.cookie.js"></script>
-	<script src="js/lib/underscore-min.js"></script>
-	<script src="js/lib/backbone-min.js"></script>
+	<script src="/js/lib/jquery-1.11.1.min.js"></script>
+	<script src="/js/lib/jquery.cookie.js"></script>
+	<script src="/js/lib/underscore-min.js"></script>
+	<script src="/js/lib/backbone-min.js"></script>
 
 	<?php #<script src="script.min.js"></script> ?>
 
-	<script src="backbone.js"></script>
+	<script src="/backbone.js"></script>
 
 
 

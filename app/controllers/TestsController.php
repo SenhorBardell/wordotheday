@@ -13,75 +13,33 @@ class TestsController extends ApiController {
 		return $this->respond($this->transformCollection($tests));
 	}
 
-	// public function start() {
-
-	// 	$category = Category::find(Input::get('category'));
-	// 	$user = User::find(Input::get('user'));
-
-	// 	$balance = $user->balance;
-	// 	$words = $category->wordcards->take(5)->toArray();
-
-	// 	$response['status'] = 'test started';
-	// 	$response['balance'] = $balance;
-
-	// 	$all_words = WordCard::all();
-
-	// 	foreach($words as $word) {
-
-	// 		$j = 0;
-	// 		$i = 0;
-	// 		while ($i < 4) {
-
-	// 			$rand = rand(0, 3);
-	// 			$rand_global = rand(0, count($all_words) - 1);
-	// 			$used_words = array();
-
-	// 			if (!in_array($all_words[$rand_global], $used_words)) {
-
-	// 				$shuffled_words[$rand] = $all_words[$rand_global];
-	// 				array_push($used_words, $shuffled_words[$rand]);
-	// 				$i++;
-
-	// 			}	
-
-	// 		}
-
-	// 		$generated_words[$j] = array(
-	// 			'answer' => $word['answer'],
-	// 			'right_word' => $word['word'],
-	// 			'words' => array_rand($used_words)
-	// 		);
-
-	// 		$j++;
-	// 	}
-
-	// 	$response['words'] = $words;
-
-	// 	return Response::json($response);
-	// }
-
 	public function start($user_id) {
-		$category = Category::find(Input::get('category'));
-		$offset = Input::has('page') ? Input::get('page') : 1;
+		$offset = Input::has('page') ? Input::get('page') : 0;
 		$user = User::find($user_id);
 
-		if (count($user) == 0)
+		$category = Category::find(Input::get('category'));
+		if (!$category)
+			return $this->respondNotFound('Category not found');
+
+		if (!$user)
 			return $this->respondNotFound('User not found');
 
-		$balance = $user['balance'];
-		$words = $category->wordcards->take(20)->skip($offset * 20)->toArray();
+		$balance = $user->balance;
+
+		if ($balance < $category->test_price)
+			return $this->respondInsufficientPrivileges('Not enough money');
+
+		$user->balance = $user->balance - $category->test_price;
+		$user->save();
+
+		$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
 		shuffle($words);
 
-		if ($balance > 0) {
-			$response['status'] = 'started';
-			$response['balance'] = $user->balance;
-			$response['words'] = $this->transformWordsCollection($words);
-			return $this->respond($response);
-		} else {
-			return $this->respondInsufficientPrivileges('Not enough money');
-		}
+		$response['status'] = 'started';
+		$response['balance'] = $user->balance;
+		$response['words'] = $this->transformWordsCollection($words);
 
-		
+		return $this->respond($response);
 	}
 
 	public function result() {
@@ -91,17 +49,6 @@ class TestsController extends ApiController {
 		$response = array('status' => 'test ended', 'balance' => $user->balance);
 
 		return $this->respond($response);
-	}
-
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-
 	}
 
 	/**

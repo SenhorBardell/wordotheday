@@ -5,26 +5,6 @@ Route::get('/', function()
 	return View::Make('dashboard');
 });
 
-Route::get('categories/{category}', function() {
-	return Redirect::to('/');
-});
-
-Route::get('category/{category}/words', function() {
-	return Redirect::to('/');
-});
-
-Route::get('words', function() {
-	return Redirect::to('/');
-});
-
-Route::get('words/{word}', function() {
-	return Redirect::to('/');
-});
-
-Route::get('menu', function() {
-	return Redirect::to('/');
-});
-
 Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('/', function() {
@@ -66,6 +46,9 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
 	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
+		Route::get('{user_id}/firstword', 'UsersController@firstword');
+		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
+
 		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
 		Route::post('{user_id}/unsubscribe', 'UsersController@unsubscribe');
 		Route::post('{user_id}/subscriptions', 'UsersController@subscriptions');
@@ -82,7 +65,6 @@ Route::group(array('prefix' => 'api'), function() {
 
 	/* Settings */
 
-	Route::resource('settings', 'SettingsController');
 	Route::get('settings', 'SettingsController@index');
 	Route::post('settings', 'SettingsController@update');
 
@@ -90,6 +72,6 @@ Route::group(array('prefix' => 'api'), function() {
 
 Route::match(array('GET', 'POST'), '/oauth', 'OauthController@login');
 
-Route::any('{slug}/', function() {
-	return View::Make('dashboard');
+Route::any('{slug}', function() {
+	return Redirect::to('/');
 });

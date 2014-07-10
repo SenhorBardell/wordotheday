@@ -6,4 +6,8 @@ class WordCard extends \Eloquent {
 	public function tests() {
 		return $this->belongsTo('Category');
 	}
+
+	public function sent() {
+		return $this->hasMany('User');
+	}
 }

@@ -14,10 +14,11 @@ class SettingsController extends ApiController {
 			'answer_time' => $s->answer_time,
 			'daily_bonus' => $s->daily_bonus,
 			'general_cost' => $s->general_cost,
-			'test_cost' => $s->test_cost,
+			// 'test_cost' => $s->test_cost,
 			'top_bonus' => $s->top_bonus,
-			'word_cost' => $s->word_cost
-			);
+			'word_cost' => $s->word_cost,
+			'life_cost' => $s->life_cost,
+		);
 
 		return $this->respond($settings);
 	}
@@ -32,15 +33,23 @@ class SettingsController extends ApiController {
 	{
 		$input = Input::all();
 		$settings = Setting::first();
-		$settings->answer_time = $input['answer_time'];
-		$settings->daily_bonus = $input['daily_bonus'];
-		$settings->general_cost = $input['general_cost'];
-		$settings->test_cost = $input['test_cost'];
-		$settings->top_bonus = $input['top_bonus'];
-		$settings->word_cost = $input['word_cost'];
-		$settings->save();
+		$settings->fill($input);
 
-		return $this->respond(array('status' => 'ok'));
+		if ($settings->save()) {
+
+			$returnedSettings = array(
+				'answer_time' => $settings->answer_time,
+				'daily_bonus' => $settings->daily_bonus,
+				'general_cost' => $settings->general_cost,
+				// 'test_cost' => $settings->test_cost,
+				'top_bonus' => $settings->top_bonus,
+				'word_cost' => $settings->word_cost,
+				'life_cost' => $settings->life_cost,
+			);
+			return $this->respond($returnedSettings);
+
+		};
+
 	}
 
 }

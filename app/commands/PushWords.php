@@ -65,7 +65,6 @@ class PushWords extends Command {
 				$this->info('Resetting word card notifications');
 			}
 
-
 			// Retrieve users signed categories 
 
 			// Check queue on a category
@@ -89,17 +88,19 @@ class PushWords extends Command {
 	}
 
 	public function push_wordcard($word) {
-		// foreach ($this->users as $user) {
+		foreach ($this->users as $user) {
 		// 	$bucket = array(
 		// 		'user_id' => $user['id'],
 		// 		'word' => $word['word'],
 		// 		'answer' => $word['answer']
 		// 	);
-			PushNotification::app('IOS')
-				->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
-				->send('Hello World, i`m a push message');
-			// $this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
-		// }
+			// PushNotification::app('IOS')
+				// ->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
+				// ->send('Hello World, i`m a push message');
+			$user->word_id = $word['id'];
+			$user->save();
+			$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
+		}
 	}
 
 	/**
