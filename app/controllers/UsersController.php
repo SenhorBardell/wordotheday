@@ -118,15 +118,17 @@ class UsersController extends ApiController {
 			));
 
 			if ($user)
-				return $this->respond(array(
-					'username' => $user['username'],
-					'max_result' => $user['max_result'],
-					'overal_standing' => $user['overal_standing'],
-					'balance' => $user['balance'],
-					'id' => $user['id'],
-					'password' => $user['password'],
-					'word_id' => $user['word_id']
-				));
+				return $user;
+				// return $this->respond(array(
+				// 	'username' => $user['username'],
+				// 	'max_result' => $user['max_result'],
+				// 	'overal_standing' => $user['overal_standing'],
+				// 	'balance' => $user['balance'],
+				// 	'id' => $user['id'],
+				// 	'password' => $user['password'],
+				// 	'word_id' => $user['word_id']
+				// ));
+				
 
 			return $this->respondServerError('Error creating user');
 		}
