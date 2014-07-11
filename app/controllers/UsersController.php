@@ -94,42 +94,44 @@ class UsersController extends ApiController {
 	 */
 	public function store()
 	{
-		$validation = User::validate(Input::all());
+		// $validation = User::validate(Input::all());
 
-		if ($validation->fails())
-		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
+		// if ($validation->fails())
+		//  	return $this->respondInsufficientPrivileges($validation->messages()->all());
 
-		$oldUser = User::where('username', Input::get('username'))->first();
+		// $oldUser = User::where('username', Input::get('username'))->first();
 
-		if ($oldUser) {
+		// if ($oldUser) {
 
-			$oldUser->password = Hash::make(Input::get('username'));
+		// 	$oldUser->password = Hash::make(Input::get('username'));
 
-			return $oldUser;
+		// 	return $oldUser;
 
-		} else {
-			$user = User::create(array(
-				'username' => Input::get('username'),
-				'password' => Hash::make(Input::get('username')),
-				'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
-				// 'balance' => Input::has('balance') ? Input::get('balance') : 0,
-				// 'overal_standing' => 0,
-				// 'max_result' => 0,
-			));
+		// } else {
+		// 	$user = User::create(array(
+		// 		'username' => Input::get('username'),
+		// 		'password' => Hash::make(Input::get('username')),
+		// 		'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
+		// 		// 'balance' => Input::has('balance') ? Input::get('balance') : 0,
+		// 		// 'overal_standing' => 0,
+		// 		// 'max_result' => 0,
+		// 	));
 
-			if ($user)
-				return $this->respond(array(
-					'username' => $user['username'],
-					'max_result' => $user['max_result'],
-					'overal_standing' => $user['overal_standing'],
-					'balance' => $user['balance'],
-					'id' => $user['id'],
-					'password' => $user['password'],
-					'word_id' => $user['word_id']
-				));
+		// 	if ($user)
+		// 		return $this->respond(array(
+		// 			'username' => $user['username'],
+		// 			'max_result' => $user['max_result'],
+		// 			'overal_standing' => $user['overal_standing'],
+		// 			'balance' => $user['balance'],
+		// 			'id' => $user['id'],
+		// 			'password' => $user['password'],
+		// 			'word_id' => $user['word_id']
+		// 		));
 
-			return $this->respondServerError('Error creating user');
-		}
+		// 	return $this->respondServerError('Error creating user');
+		// }
+		
+		return Response::json('test');
 		
 	}
 
