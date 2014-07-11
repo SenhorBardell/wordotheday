@@ -127,6 +127,8 @@ class UsersController extends ApiController {
 					'password' => $user['password'],
 					'word_id' => $user['word_id']
 				));
+
+			return $this->respondServerError('Error creating user');
 		}
 		
 	}
