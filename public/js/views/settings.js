@@ -27,9 +27,10 @@ App.Views.Settings = Backbone.View.extend({
 			answer_time: $('#answer_time').val(),
 			daily_bonus: $('#daily_bonus').val(),
 			general_cost: $('#general_cost').val(),
-			test_cost: $('#test_cost').val(),
+			life_cost: $('#life_cost').val(),
 			top_bonus: $('#top_bonus').val(),
 			word_cost: $('#word_cost').val(),
+			words_for_the_next_bonus: $('#words_for_the_next_bonus').val()
 		}, {wait: true});
 		$('<span> Сохранено</span>').insertAfter('.pure-button');
 	}

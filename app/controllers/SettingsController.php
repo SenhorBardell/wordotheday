@@ -5,7 +5,7 @@ class SettingsController extends ApiController {
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return Response
+	 * @return Res2ponse
 	 */
 	public function index()
 	{
@@ -14,7 +14,6 @@ class SettingsController extends ApiController {
 			'answer_time' => $s->answer_time,
 			'daily_bonus' => $s->daily_bonus,
 			'general_cost' => $s->general_cost,
-			// 'test_cost' => $s->test_cost,
 			'top_bonus' => $s->top_bonus,
 			'word_cost' => $s->word_cost,
 			'life_cost' => $s->life_cost,
@@ -42,10 +41,10 @@ class SettingsController extends ApiController {
 				'answer_time' => $settings->answer_time,
 				'daily_bonus' => $settings->daily_bonus,
 				'general_cost' => $settings->general_cost,
-				// 'test_cost' => $settings->test_cost,
 				'top_bonus' => $settings->top_bonus,
 				'word_cost' => $settings->word_cost,
 				'life_cost' => $settings->life_cost,
+				'words_for_the_next_bonus' => $settings->words_for_the_next_bonus
 			);
 			return $this->respond($returnedSettings);
 

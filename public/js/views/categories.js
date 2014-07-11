@@ -42,8 +42,11 @@ App.Views.Categories = Backbone.View.extend({
 	},
 
 	remove: function() {
-		this.remove();
-		this.unbind();
+		// ok = confirm('Вы действительно хотите удалить выбранную категорию?');
+		// if (ok == true) {
+			this.remove();
+			this.unbind();
+		// }
 	}
 });
 
@@ -107,7 +110,8 @@ App.Views.Category = Backbone.View.extend({
 	},
 
 	deleteCategory: function() {
-		this.model.destroy();
+		ok = confirm('Вы действительно хотите удалить выбранную категорию?');
+		if (ok == true) this.model.destroy();
 	},
 
 	unrender: function() {
