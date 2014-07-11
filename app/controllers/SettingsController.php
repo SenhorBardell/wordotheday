@@ -18,6 +18,7 @@ class SettingsController extends ApiController {
 			'top_bonus' => $s->top_bonus,
 			'word_cost' => $s->word_cost,
 			'life_cost' => $s->life_cost,
+			'words_for_the_next_bonus' => $s->words_for_the_next_bonus
 		);
 
 		return $this->respond($settings);
