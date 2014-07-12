@@ -45,7 +45,10 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::get('users', 'UsersController@index');
 	//update 
 	// destroy
-	Route::post('users', 'UsersController@store');
+	// Route::post('users', 'UsersController@store');
+	Route::post('users', function() {
+		return Response::json('test');
+	});
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
