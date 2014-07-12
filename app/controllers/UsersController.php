@@ -103,16 +103,17 @@ class UsersController extends ApiController {
 
 		if ($oldUser) {
 
-			$oldUser->password = Hash::make(Input::get('username'));
+			$oldUser->password = str_random(40);
+			$oldUser->save();
 
 			return $oldUser;
 
 		} else {
 			$user = User::create(array(
 				'username' => Input::get('username'),
-				'password' => Hash::make(Input::get('username')),
+				'password' => str_random(40),
 				'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
-				// 'balance' => Input::has('balance') ? Input::get('balance') : 0,
+				'balance' => Input::has('balance') ? Input::get('balance') : 0,
 				// 'overal_standing' => 0,
 				// 'max_result' => 0,
 			));

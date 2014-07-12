@@ -38,7 +38,7 @@ Route::filter('auth', function()
 	// if (Input::get('auth') != '123')
 		// return Response::json(array('error' => array('message' => 'unauthorized', 'status_code' => 403)));
 	$user = User::where('password', Input::get('auth'))->first();
-	if ($user->isEmpty) return Response::json(array('status' => 'unauthorized'));
+	if (!$user) return Response::json(array('status' => 'unauthorized'));
 });
 
 

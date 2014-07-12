@@ -48,7 +48,7 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
-		Route::get('{user_id}', 'UsersController@show');
+		Route::post('{user_id}', 'UsersController@show');
 
 		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
 		Route::post('{user_id}/unsubscribe', 'UsersController@unsubscribe');
