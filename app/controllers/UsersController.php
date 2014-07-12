@@ -102,8 +102,8 @@ class UsersController extends ApiController {
 
 		if ($oldUser) {
 
-			$oldUser->password = str_random(40);
-			$oldUser->save();
+			// $oldUser->password = str_random(40);
+			// $oldUser->save();
 
 			return $oldUser;
 
