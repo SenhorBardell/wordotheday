@@ -41,7 +41,11 @@ Route::group(array('prefix' => 'api'), function() {
 
 	/* Users */
 
-	Route::resource('users', 'UsersController');
+	// Route::resource('users', 'UsersController');
+	Route::get('users', 'UsersController@index');
+	//update 
+	// destroy
+	Route::post('users', 'UsersController@store');
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
