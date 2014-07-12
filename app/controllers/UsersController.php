@@ -98,7 +98,7 @@ class UsersController extends ApiController {
 		if ($validation->fails())
 		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
 
-		$oldUser = User::where('username', Input::get('username'))->first();
+		// $oldUser = User::where('username', Input::get('username'))->first();
 
 		// return $oldUser;
 		// if ($oldUser) {
