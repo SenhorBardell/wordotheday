@@ -113,6 +113,7 @@ class UsersController extends ApiController {
 				'password' => str_random(40),
 				// 'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
 				// 'balance' => Input::has('balance') ? Input::get('balance') : 100,
+				'balance' => '100'
 				// 'overal_standing' => 0,
 				// 'max_result' => 0,
 			));
