@@ -27,7 +27,6 @@ Route::group(array('prefix' => 'api'), function() {
 		return Response::json(['Authenticated'], 200);
 	}));
 
-	Route::post('test/result', 'TestsController@result');
 	Route::resource('words', 'WordCardsController');
 	Route::get('randomwords', 'WordCardsController@randomwords');
 
@@ -62,6 +61,7 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::post('{user_id}/addlife', 'UsersController@addlife');
 		Route::post('{user_id}/addword', 'MwordsController@add_word');
 		Route::post('{user_id}/teststart', 'TestsController@start');
+		Route::post('{user_id}/testend', 'TestsController@result');
 	});
 
 	/* Category */

@@ -46,11 +46,7 @@ class TestsController extends ApiController {
 
 	public function result() {
 
-		$user = User::find(Input::get('user'));
-
-		$response = array('status' => 'test ended', 'balance' => $user->balance);
-
-		return $this->respond($response);
+		return $this->respond(Input::all());
 	}
 
 	/**
