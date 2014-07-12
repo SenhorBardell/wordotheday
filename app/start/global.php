@@ -48,13 +48,13 @@ Log::useFiles(storage_path().'/logs/laravel.log');
 
 App::error(function(Exception $exception, $code)
 {
-	Log::error($exception);
-	if (App::environment('production')) {
-		return Response::json(array('error' => array(
-			'status_code' => $code,
-			'message' => 'Something went wrong'
-		)), $code);
-	}
+	// Log::error($exception);
+	// if (App::environment('production')) {
+	// 	return Response::json(array('error' => array(
+	// 		'status_code' => $code,
+	// 		'message' => 'Something went wrong'
+	// 	)), $code);
+	// }
 });
 
 App::missing(function($exception) {
