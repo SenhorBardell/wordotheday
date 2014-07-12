@@ -48,7 +48,7 @@ class PushWords extends Command {
 	public function base_cat() {
 		$users = User::all();
 		$this->users = $users;
-		$category = Category::find(1);
+		$category = Category::find(211);
 		$words = $category->wordcards;
 		$this->words = $words;
 		$count = $words->count();
