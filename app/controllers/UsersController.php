@@ -99,15 +99,16 @@ class UsersController extends ApiController {
 		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
 
 		$oldUser = User::where('username', Input::get('username'))->first();
+		return $oldUser;
 
-		if ($oldUser) {
+		// if ($oldUser) {
 
-			$oldUser->password = str_random(40);
-			$oldUser->save();
+		// 	$oldUser->password = str_random(40);
+		// 	$oldUser->save();
 
-			return $oldUser;
+		// 	return $oldUser;
 
-		}// else {
+		//}// else {
 			// $user = User::create(array(
 			// 	'username' => Input::get('username'),
 			// 	'password' => str_random(40),
