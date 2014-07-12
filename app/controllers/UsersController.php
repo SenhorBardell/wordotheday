@@ -93,10 +93,10 @@ class UsersController extends ApiController {
 	 */
 	public function store()
 	{
-		$validation = User::validate(Input::all());
+		// $validation = User::validate(Input::all());
 
-		if ($validation->fails())
-		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
+		// if ($validation->fails())
+		//  	return $this->respondInsufficientPrivileges($validation->messages()->all());
 
 		 return Response::json('test');
 
@@ -132,7 +132,7 @@ class UsersController extends ApiController {
 			// 	));
 				
 
-			return $this->respondServerError('Error creating user');
+			// return $this->respondServerError('Error creating user');
 		}
 		
 	}
