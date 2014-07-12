@@ -133,7 +133,7 @@ class UsersController extends ApiController {
 				
 
 			// return $this->respondServerError('Error creating user');
-		// }
+		}
 		
 	}
 
