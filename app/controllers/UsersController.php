@@ -100,14 +100,15 @@ class UsersController extends ApiController {
 
 		$oldUser = User::where('username', Input::get('username'))->first();
 
-		if ($oldUser) {
+		return $oldUser;
+		// if ($oldUser) {
 
-			$oldUser->password = str_random(40);
-			$oldUser->save();
+		// 	$oldUser->password = str_random(40);
+		// 	$oldUser->save();
 
-			return $oldUser;
+		// 	return $oldUser;
 
-		} //else {
+		//} //else {
 			// $user = User::create(array(
 			// 	'username' => Input::get('username'),
 			// 	'password' => str_random(40),
