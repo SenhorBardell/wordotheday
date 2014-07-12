@@ -2,7 +2,7 @@
 
 class User extends \Eloquent {
 
-	protected $fillable = ['username', 'password', 'word_id'];
+	protected $fillable = ['username', 'password', 'word_id', 'balance'];
 
 	public function subscriptions() {
 		return $this->hasMany('Subscription');

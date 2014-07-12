@@ -10,6 +10,7 @@ class SettingsController extends ApiController {
 	public function index()
 	{
 		$s = Setting::first();
+		$word = WordCard::find($s->word_id);
 		$settings = array(
 			'answer_time' => $s->answer_time,
 			'daily_bonus' => $s->daily_bonus,
@@ -18,7 +19,11 @@ class SettingsController extends ApiController {
 			'word_cost' => $s->word_cost,
 			'life_cost' => $s->life_cost,
 			'words_for_the_next_bonus' => $s->words_for_the_next_bonus,
-			'word_id' => $s->word_id
+			'word' => array(
+				'id' => $s->word_id,
+				'word' => $word->word,
+				'answer' => $word->answer
+			)
 		);
 
 		return $this->respond($settings);
