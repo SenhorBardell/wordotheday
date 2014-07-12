@@ -117,6 +117,8 @@ class UsersController extends ApiController {
 				// 'max_result' => 0,
 			));
 
+			return $user;
+
 			if ($user)
 				return $this->respond(array(
 					'username' => $user['username'],
