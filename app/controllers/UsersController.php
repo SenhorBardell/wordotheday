@@ -93,12 +93,10 @@ class UsersController extends ApiController {
 	 */
 	public function store()
 	{
-		// $validation = User::validate(Input::all());
+		$validation = User::validate(Input::all());
 
-		// if ($validation->fails())
-		//  	return $this->respondInsufficientPrivileges($validation->messages()->all());
-
-		 return Response::json('test');
+		if ($validation->fails())
+		 	return $this->respondInsufficientPrivileges($validation->messages()->all());
 
 		// $oldUser = User::where('username', Input::get('username'))->first();
 
@@ -133,7 +131,7 @@ class UsersController extends ApiController {
 				
 
 			// return $this->respondServerError('Error creating user');
-		}
+		// }
 		
 	}
 
