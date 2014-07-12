@@ -112,7 +112,7 @@ class UsersController extends ApiController {
 				'username' => Input::get('username'),
 				'password' => str_random(40),
 				'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()->word_id,
-				'balance' => Input::has('balance') ? Input::get('balance') : 100,
+				// 'balance' => Input::has('balance') ? Input::get('balance') : 100,
 				// 'overal_standing' => 0,
 				// 'max_result' => 0,
 			));
@@ -120,7 +120,6 @@ class UsersController extends ApiController {
 			return $user;
 
 			// if ($user)
-			// 	// return $user;
 			// 	return $this->respond(array(
 			// 		'username' => $user['username'],
 			// 		'max_result' => $user['max_result'],
