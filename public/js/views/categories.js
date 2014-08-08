@@ -66,6 +66,8 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
 
 	categoryTemplate: function(category) {
+		if (category.get('id') == 211) console.log('General category');
+
 		if (category.get('id') == 211)
 			return '<option selected value=' + category.get('id') + '>' + category.get('name') + '</option>';
 		else
