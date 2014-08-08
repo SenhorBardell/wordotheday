@@ -48,13 +48,14 @@ class PushWords extends Command {
 	public function base_cat() {
 		$users = User::all();
 		$this->users = $users;
-		$category = Category::find(211);
+		$category = Category::find(1);
 		$words = $category->wordcards;
 		$this->words = $words;
 		$count = $words->count();
 		$this->count = $count;
 		$sent_count = SentWordCard::all()->count();
 		$state = true;
+		$settings = Setting::first();
 		while ($state) {
 			$word = $words[rand(0, $count -1)];
 			$this->word = $word;
@@ -84,6 +85,8 @@ class PushWords extends Command {
 			}
 
 		}
+		
+		$settings->word_id = $this->word['id']
 
 	}
 
