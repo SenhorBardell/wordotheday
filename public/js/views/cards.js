@@ -5,7 +5,7 @@ App.Views.CategoryCardsApp = Backbone.View.extend({
 		vent.on('card:edit', this.editCard, this);
 
 		$('.content').empty().append(window.App.JST['card/layout']);
-		console.log('Fired');
+
 		var AllCardsView = new App.Views.Cards({ collection: App.Cards, category_id: this.options.category_id }).render();
 		AllCardsView.$el.insertAfter('.content thead');
 			// .append('<h2 class="content-header"><a href="/categories">&larr;</a> Карточки слов<a href="category/' + this.options.category_id + '/word/add">+</a></h2>')

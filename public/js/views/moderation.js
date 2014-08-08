@@ -5,8 +5,20 @@ App.Views.ModerationApp = Backbone.View.extend({
 	
 		$('.content').empty().append(window.App.JST['moderation/layout']);
 		AllModerationWordsView.$el.insertAfter('.content thead');
-	}	
 
+		vent.on('card:edit', this.editCard, this);
+	},
+
+	editCard: function(card) {
+		var editCardView = new App.Views.EditCard({ model: card });
+		editCardView.$el.insertAfter('.content-header');
+		var AllCategoriesViewDropDown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
+		AllCategoriesViewDropDown.$el.insertAfter($('#cat_id_label'));
+	}, 
+
+	onClose: function() {
+		vent.off('card:edit', this.editCard, this);
+	}
 
 })
 
@@ -47,7 +59,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 
 	events: {
 		'click .accept': 'accept',
-		'click .reject': 'reject'
+		'click .reject': 'reject',
+		'click .edit': 'edit'
 	},
 
 	accept: function(e) {
@@ -64,6 +77,10 @@ App.Views.ModerationWord = Backbone.View.extend({
 		}).fail(function() {
 			console.log('Failed aceppting the word');
 		});
+	},
+
+	edit: function() {
+		vent.trigger('card:edit', this.model);
 	},
 
 	reject: function() {

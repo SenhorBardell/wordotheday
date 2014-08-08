@@ -221,11 +221,13 @@ __p += '<td class="id">' +
 ((__t = ( word )) == null ? '' : __t) +
 '</td>\n<td>' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit"><a href="/api/moderate/' +
+'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit1"><a href="/api/moderate/' +
+((__t = ( id )) == null ? '' : __t) +
+'/edit" class="edit"><img src="/img/edit.png"></a></td>\n<td class="accept"><a href="/api/moderate/' +
 ((__t = ( id )) == null ? '' : __t) +
 '/accept" class="accept"><img src="/img/ok.png"></a></td>\n<td class="delete"><a href="/api/moderate/' +
 ((__t = ( id )) == null ? '' : __t) +
-'/decline" class="reject"><img src="/img/delete.png"></a></td>la';
+'/decline" class="reject"><img src="/img/delete.png"></a></td>';
 
 }
 return __p
@@ -413,7 +415,7 @@ App.Views.CategoryCardsApp = Backbone.View.extend({
 		vent.on('card:edit', this.editCard, this);
 
 		$('.content').empty().append(window.App.JST['card/layout']);
-		console.log('Fired');
+
 		var AllCardsView = new App.Views.Cards({ collection: App.Cards, category_id: this.options.category_id }).render();
 		AllCardsView.$el.insertAfter('.content thead');
 			// .append('<h2 class="content-header"><a href="/categories">&larr;</a> Карточки слов<a href="category/' + this.options.category_id + '/word/add">+</a></h2>')
@@ -841,8 +843,20 @@ App.Views.ModerationApp = Backbone.View.extend({
 	
 		$('.content').empty().append(window.App.JST['moderation/layout']);
 		AllModerationWordsView.$el.insertAfter('.content thead');
-	}	
 
+		vent.on('card:edit', this.editCard, this);
+	},
+
+	editCard: function(card) {
+		var editCardView = new App.Views.EditCard({ model: card });
+		editCardView.$el.insertAfter('.content-header');
+		var AllCategoriesViewDropDown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
+		AllCategoriesViewDropDown.$el.insertAfter($('#cat_id_label'));
+	}, 
+
+	onClose: function() {
+		vent.off('card:edit', this.editCard, this);
+	}
 
 })
 
@@ -883,7 +897,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 
 	events: {
 		'click .accept': 'accept',
-		'click .reject': 'reject'
+		'click .reject': 'reject',
+		'click .edit': 'edit'
 	},
 
 	accept: function(e) {
@@ -900,6 +915,10 @@ App.Views.ModerationWord = Backbone.View.extend({
 		}).fail(function() {
 			console.log('Failed aceppting the word');
 		});
+	},
+
+	edit: function() {
+		vent.trigger('card:edit', this.model);
 	},
 
 	reject: function() {

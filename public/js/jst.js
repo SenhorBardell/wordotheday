@@ -198,11 +198,13 @@ __p += '<td class="id">' +
 ((__t = ( word )) == null ? '' : __t) +
 '</td>\n<td>' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit"><a href="/api/moderate/' +
+'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit1"><a href="/api/moderate/' +
+((__t = ( id )) == null ? '' : __t) +
+'/edit" class="edit"><img src="/img/edit.png"></a></td>\n<td class="accept"><a href="/api/moderate/' +
 ((__t = ( id )) == null ? '' : __t) +
 '/accept" class="accept"><img src="/img/ok.png"></a></td>\n<td class="delete"><a href="/api/moderate/' +
 ((__t = ( id )) == null ? '' : __t) +
-'/decline" class="reject"><img src="/img/delete.png"></a></td>la';
+'/decline" class="reject"><img src="/img/delete.png"></a></td>';
 
 }
 return __p
