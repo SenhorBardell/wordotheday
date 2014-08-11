@@ -10,7 +10,7 @@ App.Views.ModerationApp = Backbone.View.extend({
 	},
 
 	editCard: function(card) {
-		var editCardView = new App.Views.EditCard({ model: card });
+		var editCardView = new App.Views.EditMCard({ model: card });
 		editCardView.$el.insertAfter('.content-header');
 		var AllCategoriesViewDropDown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
 		AllCategoriesViewDropDown.$el.insertAfter($('#cat_id_label'));
@@ -54,7 +54,7 @@ App.Views.ModerationWord = Backbone.View.extend({
 
 	initialize: function(options) {
 		this.model.on('destroy', this.unrender, this);
-		this.model.on('change', this.unrender, this);
+		this.model.on('change', this.render, this);
 	},
 
 	events: {

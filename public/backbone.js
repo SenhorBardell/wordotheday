@@ -79,7 +79,7 @@ __p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</lab
 ((__t = ( word )) == null ? '' : __t) +
 '">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Редактировать">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>\'';
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Редактировать">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>';
 
 }
 return __p
@@ -92,6 +92,20 @@ with (obj) {
 __p += '<h2 class="content-header"><a href="categories" class="back"><img src="/img/left.png"></a>Карточки слов<a href="category/' +
 ((__t = ( category_id )) == null ? '' : __t) +
 '/word/add"><img src="/img/add.png"></a></h2>\n\n<table>\n\t<thead>\n\t\t<tr>\n\t\t\t<td>слово</td>\n\t\t\t<td colspan="2" class="options">Опции</td>\n\t\t</tr>\n\t</thead>\n</table>';
+
+}
+return __p
+};
+
+this["window"]["App"]["JST"]["card/medit"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</label>\n\t\t<input type="text" id="edit_word" name="word" value="' +
+((__t = ( word )) == null ? '' : __t) +
+'">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
+((__t = ( answer )) == null ? '' : __t) +
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Удалить</span>\n\t</div>\n</form>';
 
 }
 return __p
@@ -569,6 +583,49 @@ App.Views.AddCard = Backbone.View.extend({
 	}
 });
 
+App.Views.EditMCard = Backbone.View.extend({
+	template: window.App.JST['card/medit'],
+
+	initialize: function() {
+		this.render();
+
+		this.model.on('destroy', this.unrender, this);
+	},
+
+	events: {
+		'submit form': 'submit',
+		'click .close': 'cancel'
+	},
+
+	submit: function(e) {
+		e.preventDefault();
+
+		this.model.save({
+			word: $('#edit_word').val(),
+			answer: $('#edit_answer').val(),
+			category_id: $('#category_id').val()
+		}, {wait: true});
+
+		this.unbind()
+		this.remove();
+	},
+
+	cancel: function() {
+		this.unbind();
+		this.remove();
+	},
+
+	unrender: function() {
+		this.remove();
+	},
+
+	render: function() {
+		var html = this.template(this.model.toJSON());
+		this.$el.html(html);
+		return this;
+	}
+});
+
 App.Views.EditCard = Backbone.View.extend({
 	template: window.App.JST['card/edit'],
 
@@ -677,7 +734,7 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 				"<%= categoryTemplate(category) %>",
 			"<% }); %>",
 		"</select>"
-	].join('')),
+	].join(',')),
 
 	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
 
@@ -848,7 +905,7 @@ App.Views.ModerationApp = Backbone.View.extend({
 	},
 
 	editCard: function(card) {
-		var editCardView = new App.Views.EditCard({ model: card });
+		var editCardView = new App.Views.EditMCard({ model: card });
 		editCardView.$el.insertAfter('.content-header');
 		var AllCategoriesViewDropDown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
 		AllCategoriesViewDropDown.$el.insertAfter($('#cat_id_label'));
@@ -892,7 +949,7 @@ App.Views.ModerationWord = Backbone.View.extend({
 
 	initialize: function(options) {
 		this.model.on('destroy', this.unrender, this);
-		this.model.on('change', this.unrender, this);
+		this.model.on('change', this.render, this);
 	},
 
 	events: {

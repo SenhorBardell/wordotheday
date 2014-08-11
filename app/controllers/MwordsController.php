@@ -223,6 +223,18 @@ class MwordsController extends ApiController {
 		return false;
 	}
 
+	public function update($id) {
+		$word = Mword::find($id);
+
+		if (!$word) 
+			return $this->respondNotFound();
+
+		if ($word->update(Input::all()))
+			return $this->respond($this->transform_word($word));
+
+		return $this->respondServerError();
+	}
+
 	private function validate_id($id) {
 		$validator = Validator::make(array(
 			'id' => $id

@@ -8,7 +8,7 @@ Route::get('/', function()
 Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('/', function() {
-		$url = URL::to('/').'api';
+		$url = URL::to('/').'/api';
 		return Response::json(array(
 				'status' => $url,
 				'words' => $url.'/words',
@@ -34,6 +34,7 @@ Route::group(array('prefix' => 'api'), function() {
 
 	Route::get('moderate/words', 'MwordsController@show_all');
 	Route::get('moderate/words/{word_id}', 'MwordsController@show');
+	Route::put('moderate/words/{word_id}', 'MwordsController@update');
 	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
 	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');

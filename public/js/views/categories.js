@@ -61,7 +61,7 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 				"<%= categoryTemplate(category) %>",
 			"<% }); %>",
 		"</select>"
-	].join('')),
+	].join(',')),
 
 	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
 

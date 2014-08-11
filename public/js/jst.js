@@ -56,7 +56,7 @@ __p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</lab
 ((__t = ( word )) == null ? '' : __t) +
 '">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Редактировать">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>\'';
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Редактировать">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n</form>';
 
 }
 return __p
@@ -69,6 +69,20 @@ with (obj) {
 __p += '<h2 class="content-header"><a href="categories" class="back"><img src="/img/left.png"></a>Карточки слов<a href="category/' +
 ((__t = ( category_id )) == null ? '' : __t) +
 '/word/add"><img src="/img/add.png"></a></h2>\n\n<table>\n\t<thead>\n\t\t<tr>\n\t\t\t<td>слово</td>\n\t\t\t<td colspan="2" class="options">Опции</td>\n\t\t</tr>\n\t</thead>\n</table>';
+
+}
+return __p
+};
+
+this["window"]["App"]["JST"]["card/medit"] = function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</label>\n\t\t<input type="text" id="edit_word" name="word" value="' +
+((__t = ( word )) == null ? '' : __t) +
+'">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
+((__t = ( answer )) == null ? '' : __t) +
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Удалить</span>\n\t</div>\n</form>';
 
 }
 return __p

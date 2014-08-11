@@ -159,6 +159,54 @@ App.Views.AddCard = Backbone.View.extend({
 	}
 });
 
+App.Views.EditMCard = Backbone.View.extend({
+	template: window.App.JST['card/medit'],
+
+	initialize: function() {
+		this.render();
+
+		this.model.on('destroy', this.unrender, this);
+	},
+
+	events: {
+		'submit form': 'submit',
+		'click .close': 'cancel'
+	},
+
+	submit: function(e) {
+		e.preventDefault();
+
+		id = this.model.get('id');
+		category = $(e.target).parent().parent().find('#category_id').val();
+
+		that = this
+		$.ajax({
+			type: 'POST',
+			url: '/api/moderate/words/'+ id + '/changestatus',
+			data: { category: category, status: 'accepted'}
+		}).done(function() {
+			that.model.fetch();
+		}).fail(function() {
+			console.log('Failed aceppting the word');
+		});
+	},
+
+	cancel: function() {
+		this.unbind();
+		this.remove();
+	},
+
+	unrender: function() {
+		this.remove();
+	},
+
+	render: function() {
+		var html = this.template(this.model.toJSON());
+		this.$el.html(html);
+		return this;
+	}
+});
+
 App.Views.EditCard = Backbone.View.extend({
 	template: window.App.JST['card/edit'],
 
