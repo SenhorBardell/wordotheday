@@ -87,6 +87,7 @@ class PushWords extends Command {
 		}
 
 		$settings['word_id'] = $this->word['id'];
+		$settings->save();
 
 	}
 
