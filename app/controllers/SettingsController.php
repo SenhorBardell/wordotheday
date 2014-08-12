@@ -22,7 +22,8 @@ class SettingsController extends ApiController {
 			'word' => array(
 				'id' => $s->word_id,
 				'word' => $word->word,
-				'answer' => $word->answer
+				'answer' => $word->answer,
+				'cat_id' => $word->category_id
 			),
 			'quiz' => [
 				'url' => $s->quiz,
