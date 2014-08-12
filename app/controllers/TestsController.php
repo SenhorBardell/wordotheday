@@ -17,24 +17,42 @@ class TestsController extends ApiController {
 		$offset = Input::has('page') ? Input::get('page') : 0;
 		$user = User::find($user_id);
 
-		$category = Category::find(Input::get('category'));
-		if (!$category)
-			return $this->respondNotFound('Category not found');
-
 		if (!$user)
 			return $this->respondNotFound('User not found');
 
 		$balance = $user->balance;
 
-		if ($balance < $category->test_price)
+		if (Input::get('category') == 0) {
+
+			$s = Setting::first();
+
+			if ($balance < $s->general_cost)
+				return $this->respondInsufficientPrivileges('Not enough money');
+
+			if (Input::has('page'))
+				$user->balance = $user->balance - $s->general_cost;
+
+			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
+
+		} else {
+
+			$category = Category::find(Input::get('category'));
+
+			if (!$category)
+				return $this->respondNotFound('Category not found');
+
+			if ($balance < $category->test_price)
 			return $this->respondInsufficientPrivileges('Not enough money');
 
-		if (!Input::has('page'))
-			$user->balance = $user->balance - $category->test_price;
-		
+			if (Input::has('page'))
+				$user->balance = $user->balance - $category->test_price;
+
+			$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
+
+		}
+
 		$user->save();
 
-		$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
 		shuffle($words);
 
 		$response['status'] = 'started';

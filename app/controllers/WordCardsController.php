@@ -20,7 +20,8 @@ class WordCardsController extends ApiController {
 	 */
 	public function index()
 	{
-		$wordcards = WordCard::all();
+		$wordcards = WordCard::paginate();
+		return $wordcards;
 
 		return $this->respond($this->wordTransformer->transformWords($wordcards->toArray()));
 	}

@@ -50,8 +50,10 @@ class CategoriesController extends ApiController {
 	}
 
 	public function show_words($category_id) {
+
 		$category = Category::find($category_id);
 		$words = Category::find($category_id)->wordcards;
+
 		if ($words && $category)
 			return $this->respond($this->transformWordCollection($words));
 		return $this->respondNotFound();
