@@ -23,7 +23,11 @@ class SettingsController extends ApiController {
 				'id' => $s->word_id,
 				'word' => $word->word,
 				'answer' => $word->answer
-			)
+			),
+			'quiz' => [
+				'url' => $s->quiz,
+				'added_on' => $s->added_on
+			]
 		);
 
 		return $this->respond($settings);
