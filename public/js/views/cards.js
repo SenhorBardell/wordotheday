@@ -126,19 +126,21 @@ App.Views.AddCard = Backbone.View.extend({
 
 	events: {
 		'submit': 'submit',
-		'click .close': 'cancel'
+		'click .close': 'cancel',
 	},
 
 	submit: function(e) {
 		e.preventDefault();
 
-		this.collection.create({
-			word: this.word.val(),
-			answer: this.answer.val(),
-			category_id: this.category_id.val()
-		}, { wait: true });
+		if (this.word.val().length <= 125) {
+			this.collection.create({
+				word: this.word.val(),
+				answer: this.answer.val(),
+				category_id: this.category_id.val()
+			}, { wait: true });
 
-		this.clearForm();
+			this.clearForm();
+		}
 	},
 
 	render: function() {

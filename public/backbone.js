@@ -49,7 +49,7 @@ this["window"]["App"]["JST"]["card/add"] = function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape;
 with (obj) {
-__p += '<form class="pure-form" id="addWord">\n\n\t<div>\n\t\t<label for="word">Слово</label>\n\t\t <input type="text" id="word" name="word">\n\t</div>\n\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="answer" name="answer"></textarea>\n\t</div>\n\t\n\t<div>\n\t\t<label id="cat_id_label" for="test_id">Категория</label>\n\t</div>\n\t\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n\n</form>';
+__p += '<form class="pure-form" id="addWord">\n\n\t<div>\n\t\t<label for="word">Слово</label>\n\t\t <input type="text" maxlength="125" id="word" name="word">\n\t\t <span>Максимальная длинна 125</span>\n\t</div>\n\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="answer" name="answer"></textarea>\n\t</div>\n\t\n\t<div>\n\t\t<label id="cat_id_label" for="test_id">Категория</label>\n\t</div>\n\t\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Закрыть</span>\n\t</div>\n\n</form>';
 
 }
 return __p
@@ -550,19 +550,21 @@ App.Views.AddCard = Backbone.View.extend({
 
 	events: {
 		'submit': 'submit',
-		'click .close': 'cancel'
+		'click .close': 'cancel',
 	},
 
 	submit: function(e) {
 		e.preventDefault();
 
-		this.collection.create({
-			word: this.word.val(),
-			answer: this.answer.val(),
-			category_id: this.category_id.val()
-		}, { wait: true });
+		if (this.word.val().length <= 125) {
+			this.collection.create({
+				word: this.word.val(),
+				answer: this.answer.val(),
+				category_id: this.category_id.val()
+			}, { wait: true });
 
-		this.clearForm();
+			this.clearForm();
+		}
 	},
 
 	render: function() {
