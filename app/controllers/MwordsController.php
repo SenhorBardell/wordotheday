@@ -192,13 +192,13 @@ class MwordsController extends ApiController {
 	public function create_word($word, $category_id) {
 
 		$validator = Validator::make(array(
-			'user_id' => $user_id,
+			// 'user_id' => $user_id,
 			'word' => Input::get('word'),
 			'answer' => Input::get('answer'),
 			'category_id' => Input::get('category_id') 
 
 		), array(
-			'user_id' => 'numeric',
+			// 'user_id' => 'numeric',
 			'word' => 'alpha_spaces',
 			'answer' => 'alpha_spaces',
 			'category_id' => 'numeric'

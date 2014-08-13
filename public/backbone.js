@@ -105,7 +105,7 @@ __p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</lab
 ((__t = ( word )) == null ? '' : __t) +
 '">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Удалить</span>\n\t</div>\n</form>';
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button reject2">Удалить</span>\n\t</div>\n</form>';
 
 }
 return __p
@@ -594,25 +594,33 @@ App.Views.EditMCard = Backbone.View.extend({
 
 	events: {
 		'submit form': 'submit',
-		'click .close': 'cancel'
+		'click .reject2': 'rejectword'
 	},
 
 	submit: function(e) {
 		e.preventDefault();
 
-		this.model.save({
-			word: $('#edit_word').val(),
-			answer: $('#edit_answer').val(),
-			category_id: $('#category_id').val()
-		}, {wait: true});
+		id = this.model.get('id');
+		category = $(e.target).parent().parent().find('#category_id').val();
 
-		this.unbind()
-		this.remove();
+		that = this
+		$.ajax({
+			type: 'POST',
+			url: '/api/moderate/words/'+ id + '/changestatus',
+			data: { category: category, status: 'accepted'}
+		}).done(function() {
+			console.log('Done');
+			that.remove();
+			that.model.destroy();
+		}).fail(function() {
+			console.log('Failed aceppting the word');
+		});
 	},
 
-	cancel: function() {
-		this.unbind();
+	rejectword: function() {
+		console.log('remove');
 		this.remove();
+		this.model.destroy();
 	},
 
 	unrender: function() {
@@ -953,14 +961,14 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	events: {
-		'click .accept': 'accept',
-		'click .reject': 'reject',
-		'click .edit': 'edit'
+		'click a.accept': 'accept',
+		'click a.reject': 'reject',
+		'click a.edit': 'edit'
 	},
 
 	accept: function(e) {
 		id = this.model.get('id');
-		category = $(e.target).parent().parent().find('#category_id').val();
+		category = $(e.target).parent().parent().parent().find('#category_id').val()
 
 		that = this
 		$.ajax({
@@ -968,7 +976,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 			url: '/api/moderate/words/'+ id + '/changestatus',
 			data: { category: category, status: 'accepted'}
 		}).done(function() {
-			that.model.fetch();
+			// that.model.fetch();
+			that.remove();
 		}).fail(function() {
 			console.log('Failed aceppting the word');
 		});

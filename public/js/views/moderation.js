@@ -58,14 +58,14 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	events: {
-		'click .accept': 'accept',
-		'click .reject': 'reject',
-		'click .edit': 'edit'
+		'click a.accept': 'accept',
+		'click a.reject': 'reject',
+		'click a.edit': 'edit'
 	},
 
 	accept: function(e) {
 		id = this.model.get('id');
-		category = $(e.target).parent().parent().find('#category_id').val();
+		category = $(e.target).parent().parent().parent().find('#category_id').val()
 
 		that = this
 		$.ajax({
@@ -73,7 +73,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 			url: '/api/moderate/words/'+ id + '/changestatus',
 			data: { category: category, status: 'accepted'}
 		}).done(function() {
-			that.model.fetch();
+			// that.model.fetch();
+			that.remove();
 		}).fail(function() {
 			console.log('Failed aceppting the word');
 		});

@@ -42,7 +42,10 @@ class PushWords extends Command {
 	 */
 	public function fire()
 	{
-		$this->base_cat();
+		PushNotification::app('IOS')
+				->to('11fb2968ad875ea1d226ac1436aa32b65b779ffc')
+				->send('Hello World, i`m a push message');
+		// $this->base_cat();
 	}
 
 	public function base_cat() {

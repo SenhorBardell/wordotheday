@@ -82,7 +82,7 @@ __p += '<form id="editWordForm">\n\t<div>\n\t\t<label for="word">Слово</lab
 ((__t = ( word )) == null ? '' : __t) +
 '">\n\t</div>\n\t\n\t<div>\n\t\t<label for="answer">Ответ</label>\n\t\t<textarea type="answer" id="edit_answer" name="answer">' +
 ((__t = ( answer )) == null ? '' : __t) +
-'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button close">Удалить</span>\n\t</div>\n</form>';
+'</textarea>\n\t</div>\n\n\t<div>\n\t\t<label id="cat_id_label" for="category_id">Категория</label>\n\t</div>\n\n\t<div>\n\t\t<input type="submit" class="pure-button pure-button-primary" value="Добавить">\n\t\t<span class="pure-button reject2">Удалить</span>\n\t</div>\n</form>';
 
 }
 return __p

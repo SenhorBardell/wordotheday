@@ -170,7 +170,7 @@ App.Views.EditMCard = Backbone.View.extend({
 
 	events: {
 		'submit form': 'submit',
-		'click .close': 'cancel'
+		'click .reject2': 'rejectword'
 	},
 
 	submit: function(e) {
@@ -185,15 +185,18 @@ App.Views.EditMCard = Backbone.View.extend({
 			url: '/api/moderate/words/'+ id + '/changestatus',
 			data: { category: category, status: 'accepted'}
 		}).done(function() {
-			that.model.fetch();
+			console.log('Done');
+			that.remove();
+			that.model.destroy();
 		}).fail(function() {
 			console.log('Failed aceppting the word');
 		});
 	},
 
-	cancel: function() {
-		this.unbind();
+	rejectword: function() {
+		console.log('remove');
 		this.remove();
+		this.model.destroy();
 	},
 
 	unrender: function() {
