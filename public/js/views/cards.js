@@ -165,6 +165,10 @@ App.Views.EditMCard = Backbone.View.extend({
 	initialize: function() {
 		this.render();
 
+		this.word = $('#word');
+		this.answer = $('#answer');
+		this.category_id = $('#category_id');
+
 		this.model.on('destroy', this.unrender, this);
 	},
 
@@ -177,13 +181,16 @@ App.Views.EditMCard = Backbone.View.extend({
 		e.preventDefault();
 
 		id = this.model.get('id');
-		category = $(e.target).parent().parent().find('#category_id').val();
 
 		that = this
 		$.ajax({
 			type: 'POST',
-			url: '/api/moderate/words/'+ id + '/changestatus',
-			data: { category: category, status: 'accepted'}
+			url: '/api/moderate/words/'+ id + '/acceptpush',
+			data: { 
+				word: $('#edit_word').val(),
+				answer: $('#edit_answer').val(),
+				category_id: $('#category_id').val()
+			}
 		}).done(function() {
 			console.log('Done');
 			that.remove();

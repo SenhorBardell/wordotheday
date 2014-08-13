@@ -38,6 +38,7 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
 	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
+	Route::post('moderate/words/{word_id}/acceptpush', 'MwordsController@acceptPush');
 
 	/* Users */
 

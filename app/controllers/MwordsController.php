@@ -189,6 +189,17 @@ class MwordsController extends ApiController {
 		return $this->respondServerError();
 	}
 
+	public function acceptPush($id) {
+		$mcard = Mword::find($id);
+		$mcard->status = 'accepted';
+		$mcard->save();
+		$card = WordCard::create(Input::all());
+		$category = Category::find(input::get('category_id'));
+		$category->update_amount();
+		$category->save();
+		return $card;
+	}
+
 	public function create_word($word, $category_id) {
 
 		$validator = Validator::make(array(
