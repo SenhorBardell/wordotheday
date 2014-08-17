@@ -51,7 +51,7 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
-	Route::group(array('prefix' => 'user'/*, 'before' => 'auth'*/), function() {
+	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
 		Route::post('{user_id}', 'UsersController@show');
