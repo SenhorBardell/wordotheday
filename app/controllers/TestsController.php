@@ -62,9 +62,17 @@ class TestsController extends ApiController {
 		return $this->respond($response);
 	}
 
-	public function result() {
+	public function result($id) {
 
-		return $this->respond(Input::all());
+		$user = User::wherePassword(Input::get('auth'))->whereId($id)->first();
+		$user->balance = $user->balance + Input::get('coins');
+		$user->save();
+		return $this->respond([
+			'id' => $user->id,
+			'balance' => $user->id,
+			'max_result' => $user->max_result,
+			'overal_standing' => $user->overal_standing,
+		]);
 	}
 
 	/**
