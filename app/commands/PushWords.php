@@ -43,9 +43,10 @@ class PushWords extends Command {
 	public function fire()
 	{
 		PushNotification::app('IOS')
-				->to('11fb2968ad875ea1d226ac1436aa32b65b779ffc')
-				->send('Hello World, i`m a push message');
+			->to('f63735137f2ffa53590b3b0f05c4502a6086c055d698950885702a51b4232d06')
+			->send('Коля, я кажись настроил пуш');
 		// $this->base_cat();
+		// $this->push_wordcard();
 	}
 
 	public function base_cat() {
@@ -94,18 +95,18 @@ class PushWords extends Command {
 
 	}
 
-	public function push_wordcard($word) {
+	public function push_wordcard() {
 		foreach ($this->users as $user) {
 		// 	$bucket = array(
 		// 		'user_id' => $user['id'],
 		// 		'word' => $word['word'],
 		// 		'answer' => $word['answer']
 		// 	);
-			// PushNotification::app('IOS')
-				// ->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
-				// ->send('Hello World, i`m a push message');
-			$user->word_id = $word['id'];
-			$user->save();
+			PushNotification::app('IOS')
+				->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
+				->send('Hello World, i`m a push message');
+			// $user->word_id = $word['id'];
+			// $user->save();
 			$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
 		}
 	}
