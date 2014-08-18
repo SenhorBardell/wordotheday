@@ -42,17 +42,16 @@ class PushWords extends Command {
 	 */
 	public function fire()
 	{
-		PushNotification::app('IOS')
-			->to('f63735137f2ffa53590b3b0f05c4502a6086c055d698950885702a51b4232d06')
-			->send('Коля, я кажись настроил пуш');
-		// $this->base_cat();
-		// $this->push_wordcard();
+		// PushNotification::app('IOS')
+		// 	->to('f63735137f2ffa53590b3b0f05c4502a6086c055d698950885702a51b4232d06')
+		// 	->send('Коля, я кажись настроил пуш');
+		$this->base_cat();
 	}
 
 	public function base_cat() {
 		$users = User::all();
 		$this->users = $users;
-		$category = Category::find(211);
+		$category = Category::find(1);
 		$words = $category->wordcards;
 		$this->words = $words;
 		$count = $words->count();
@@ -95,19 +94,26 @@ class PushWords extends Command {
 
 	}
 
-	public function push_wordcard() {
+	public function push_wordcard($word) {
 		foreach ($this->users as $user) {
 		// 	$bucket = array(
 		// 		'user_id' => $user['id'],
 		// 		'word' => $word['word'],
 		// 		'answer' => $word['answer']
 		// 	);
-			PushNotification::app('IOS')
-				->to('5e6aeba4ef288e06c426e9fa177bdf713882bd20')
-				->send('Hello World, i`m a push message');
-			// $user->word_id = $word['id'];
-			// $user->save();
-			$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
+			try {
+				PushNotification::app('IOS')
+					->to($user['username'])
+					->send('Hello World, i`m a push message');
+			} catch (Exception $e){
+				$this->error($e->getMessage());
+			} finally {
+				$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
+				$user->word_id = $word['id'];
+				$user->save();
+			}
+
+			
 		}
 	}
 
