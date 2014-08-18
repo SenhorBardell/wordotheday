@@ -62,17 +62,17 @@ class TestsController extends ApiController {
 		return $this->respond($response);
 	}
 
-	public function result($id) {
+	public function result($id) {mysql://b4ccce6110afe6:35364b49@eu-cdbr-west-01.cleardb.com/heroku_928cffd4c5b526d?reconnect=true
 
 		$user = User::wherePassword(Input::get('auth'))->whereId($id)->first();
 		$user->balance = $user->balance + Input::get('coins');
-		$user->save();
-		return $this->respond([
-			'id' => $user->id,
-			'balance' => $user->id,
-			'max_result' => $user->max_result,
-			'overal_standing' => $user->overal_standing,
-		]);
+		if ($user->save())
+			return $this->respond([
+				'id' => $user->id,
+				'balance' => $user->balance,
+				'max_result' => $user->max_result,
+				'overal_standing' => $user->overal_standing,
+			]);
 	}
 
 	/**
