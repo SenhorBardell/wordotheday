@@ -42,6 +42,10 @@ class UsersController extends ApiController {
 		return $this->respond($word);
 	}
 
+	public function restore($id) {
+
+	}
+
 	/**
 	 * Daily bonus
 	 * 
@@ -302,6 +306,14 @@ class UsersController extends ApiController {
 		return $this->respondNotFound('Devices not found');
 	}
 
+	public function addDevice($id) {
+		$user = User::find($id);
+
+		if (!$user) return $this->respondNotFound('User not found');
+
+		if ($user->update(Input::all())) return $this->respond($this->transform($user));
+	}
+
 	public function add_device($user_id) {
 
 		$validator = Validator::make(array(
@@ -408,6 +420,7 @@ class UsersController extends ApiController {
 			'overal_standing' => $user['overal_standing'],
 			'balance' => $user['balance'],
 			'id' => $user['id'],
+			'device' => $user['device'],
 			'word_id' => $user['word_id']
 		];
 	}

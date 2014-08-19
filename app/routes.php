@@ -52,16 +52,21 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
 	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
+
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
+		Route::post('{user_id}/addword', 'MwordsController@add_word');
+		Route::post('{user_id}/restore', 'UserrController@restore');
+
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
+
 		Route::post('{user_id}', 'UsersController@show');
+		Route::patch('{user_id}', 'UsersController@addDevice');
+		Route::post('{user_id}/addlife', 'UsersController@addlife');
 
 		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
 		Route::post('{user_id}/unsubscribe', 'UsersController@unsubscribe');
 		Route::post('{user_id}/subscriptions', 'UsersController@subscriptions');
-
-		Route::post('{user_id}/addlife', 'UsersController@addlife');
-		Route::post('{user_id}/addword', 'MwordsController@add_word');
+		
 		Route::post('{user_id}/teststart', 'TestsController@start');
 		Route::post('{user_id}/testend', 'TestsController@result');
 	});
