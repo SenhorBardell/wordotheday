@@ -311,7 +311,9 @@ class UsersController extends ApiController {
 
 		if (!$user) return $this->respondNotFound('User not found');
 
-		if ($user->update(Input::all())) return $this->respond($this->transform($user));
+		$user->device = Input::get('device_id');
+
+		if ($user->save()) return $this->respond($this->transform($user));
 	}
 
 	public function add_device($user_id) {
