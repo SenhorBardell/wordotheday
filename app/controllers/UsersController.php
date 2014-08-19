@@ -314,6 +314,8 @@ class UsersController extends ApiController {
 		$user->device = Input::get('device_id');
 
 		if ($user->save()) return $this->respond($this->transform($user));
+
+		return $this->respondServerError();
 	}
 
 	public function add_device($user_id) {
