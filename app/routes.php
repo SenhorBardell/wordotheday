@@ -60,7 +60,7 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
 
 		Route::post('{user_id}', 'UsersController@show');
-		Route::patch('{user_id}', 'UsersController@addDevice');
+		Route::post('{user_id}/edit', 'UsersController@addDevice');
 		Route::post('{user_id}/addlife', 'UsersController@addlife');
 
 		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
