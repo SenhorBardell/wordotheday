@@ -1,12 +1,12 @@
 <form id="editWordForm">
 	<div>
 		<label for="word">Слово</label>
-		<input type="text" id="edit_word" name="word" value="<%= word %>">
+		<input type="text" id="edit_word" name="word" value="<%= word %>" maxlength="20">
 	</div>
 	
 	<div>
-		<label for="answer">Ответ</label>
-		<textarea type="answer" id="edit_answer" name="answer"><%= answer %></textarea>
+		<label for="answer">Описание</label>
+		<textarea type="answer" id="edit_answer" name="answer" maxlength="125"><%= answer %></textarea>
 	</div>
 
 	<div>
