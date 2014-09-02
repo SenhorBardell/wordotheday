@@ -38,7 +38,7 @@ class WordCardsController extends ApiController {
 
 		// Mock
 		return Response::json([
-			'id_dayword' => 11,
+			'id_dayword' => Setting::first()->word_id,
 			'words' => WordCard::take(20)->get()->toArray()
 		]);
 	}
