@@ -40,10 +40,20 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
 	Route::post('moderate/words/{word_id}/acceptpush', 'MwordsController@acceptPush');
 
-	/* Users */
+	Route::group(['before' => 'auth.admin'], function() {
+
+		/* Category */
+
+		Route::resource('categories', 'CategoriesController');
+
+		Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');
+
+		Route::get('users', 'UsersController@index');
+
+	});
 
 	// Route::resource('users', 'UsersController');
-	Route::get('users', 'UsersController@index');
+	
 	//update 
 	// destroy
 	Route::post('users', 'UsersController@store');
@@ -51,11 +61,26 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
 	Route::post('users/adminauth', 'UsersController@adminauth');
 
-	Route::group(array('prefix' => 'user', 'before' => 'auth'), function() {
+	Route::group(['prefix' => 'user', 'before' => 'auth'], function() {
 
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
+
+		Route::post('sentwords', 'WordCardsController@sentwords');
+
+		Route::post('{user_id}/purchase', function() {
+			return Response::json(['test' => 'test']);
+		});
+
+		Route::post('{user_id}/restore', function() {
+			return Response::json(['test' => 'test']);
+		});
+
+		Route::post('{user_id}/getcards', function() {
+			return Response::json(['test' => 'test']);
+		});
+
 		Route::post('{user_id}/addword', 'MwordsController@add_word');
-		Route::post('{user_id}/restore', 'UserrController@restore');
+		// Route::post('{user_id}/restore', 'UserController@restore');
 
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
 
@@ -71,11 +96,7 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::post('{user_id}/testend', 'TestsController@result');
 	});
 
-	/* Category */
 
-	Route::resource('categories', 'CategoriesController');
-
-	Route::get('/categories/{category_id}/words', 'CategoriesController@show_words');
 
 	/* Settings */
 

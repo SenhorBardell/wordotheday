@@ -26,6 +26,23 @@ class WordCardsController extends ApiController {
 		return $this->respond($this->wordTransformer->transformWords($wordcards->toArray()));
 	}
 
+
+	/**
+	 * Получение слов для словаря
+	 * 
+	 * @return Response
+	 */
+	public function sentwords() {
+		$lastWord = Input::get('id_last_word');
+		$user = User::find(Input::get('user_id'));
+
+		// Mock
+		return Response::json([
+			'id_dayword' => 11,
+			'words' => WordCard::take(20)->get()->toArray()
+		]);
+	}
+
 	public function randomwords() {
 
 		$return = array();
