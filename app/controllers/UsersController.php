@@ -42,8 +42,14 @@ class UsersController extends ApiController {
 		return $this->respond($word);
 	}
 
-	public function restore($id) {
+	public function restore() {
 
+		$user = User::find(Input::get('user_id'));
+
+		if (!$user)
+			return $this->respondNotFound('User not found');
+
+		return $user;
 	}
 
 	/**
@@ -62,6 +68,38 @@ class UsersController extends ApiController {
 		$user->balance = $user->balance + Setting::first()->daily_bonus;
 		$user->save();
 		return $this->respond($this->transform($user));
+	}
+
+	public function purchase() {
+		$user = User::find(Input::get('user_id'));
+
+		if (!$user)
+			return $this->respondNotFound('User not found');
+
+		if (!Input::has('data'))
+			return $this->respondInsufficientPrivileges('Data not fount');
+
+		return Response::json(['user_id' => $user->id, 'balance' => $user->balance]);
+	}
+
+	public function completesurvey() {
+		if (!Input::has('user_id'))
+			return $this->respondNotFound('User not found');
+
+		$user = User::find(Input::get('user_id'));
+
+		if (!$user)
+			return $this->respondNotFound('User not found');
+
+		/*
+		$user->survey = 1;
+		if ($user->save())
+			return $this->respondNoContent();
+		 */
+		
+		return $this->respondNoContent();
+
+		return $this->respondServerError();
 	}
 
 	public function addlife($user_id) {
@@ -306,6 +344,9 @@ class UsersController extends ApiController {
 		return $this->respondNotFound('Devices not found');
 	}
 
+	/*
+	 * Route::post('{user_id}/edit', 'UsersController@addDevice');
+	 */
 	public function addDevice($id) {
 		$user = User::find($id);
 

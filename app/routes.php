@@ -67,17 +67,11 @@ Route::group(array('prefix' => 'api'), function() {
 
 		Route::post('sentwords', 'WordCardsController@sentwords');
 
-		Route::post('{user_id}/purchase', function() {
-			return Response::json(['test' => 'test']);
-		});
+		Route::post('purchase', 'UsersController@purchase');
 
-		Route::post('{user_id}/restore', function() {
-			return Response::json(['test' => 'test']);
-		});
+		Route::post('restore', 'UsersController@restore');
 
-		Route::post('{user_id}/getcards', function() {
-			return Response::json(['test' => 'test']);
-		});
+		Route::post('completesurvey', 'UsersController@completesurvey');
 
 		Route::post('{user_id}/addword', 'MwordsController@add_word');
 		// Route::post('{user_id}/restore', 'UserController@restore');
