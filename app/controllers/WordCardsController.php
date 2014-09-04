@@ -38,6 +38,8 @@ class WordCardsController extends ApiController {
 
 		$words = WordCard::take(19)->get()->toArray();
 		$word = WordCard::find(Input::get('id_last_word'));
+		if ($word)
+			$word = $word->toArray();
 
 		array_push($words, $word);
 
