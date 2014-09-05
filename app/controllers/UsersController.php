@@ -91,13 +91,13 @@ class UsersController extends ApiController {
 		if (!$user)
 			return $this->respondNotFound('User not found');
 
+		$user->balance += 50;
+
 		/*
 		$user->survey = 1;
+		*/
 		if ($user->save())
-			return $this->respondNoContent();
-		 */
-		
-		return $this->respondNoContent();
+			return $this->respond(['balance' => $user->balance]);
 
 		return $this->respondServerError();
 	}

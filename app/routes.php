@@ -52,6 +52,8 @@ Route::group(array('prefix' => 'api'), function() {
 
 	});
 
+	Route::post('/client/categories', ['before' => 'auth', 'uses' => 'CategoriesController@index']);
+// TODO
 	// Route::resource('users', 'UsersController');
 	
 	//update 
@@ -65,6 +67,8 @@ Route::group(array('prefix' => 'api'), function() {
 
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
 
+		// Hardcoded
+//mysql://b4ccce6110afe6:35364b49@eu-cdbr-west-01.cleardb.com/heroku_928cffd4c5b526d?reconnect=true
 		Route::post('sentwords', 'WordCardsController@sentwords');
 
 		Route::post('purchase', 'UsersController@purchase');
@@ -72,6 +76,8 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::post('restore', 'UsersController@restore');
 
 		Route::post('completesurvey', 'UsersController@completesurvey');
+
+		// =========
 
 		Route::post('{user_id}/addword', 'MwordsController@add_word');
 		// Route::post('{user_id}/restore', 'UserController@restore');

@@ -37,7 +37,7 @@ class WordCardsController extends ApiController {
 		$user = User::find(Input::get('user_id'));
 
 		$words = WordCard::take(19)->get()->toArray();
-		$word = Setting::first()->toArray();
+		$word = WordCard::find(Setting::first()->word_id);
 
 		array_push($words, $word);
 
