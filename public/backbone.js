@@ -1292,6 +1292,11 @@ App.Router = Backbone.Router.extend({
 						'user_id': $('#user').val(),
 						'access_token': $('#password').val()
 					});
+					$.ajaxSetup({
+						headers: {
+							'Authentication': btoa($('#password').val())
+						}
+					});
 
 					router.navigate('/categories', {trigger: true});
 

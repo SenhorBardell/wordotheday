@@ -3,6 +3,8 @@
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Sly\NotificationPusher\PushManager,
+    Sly\NotificationPusher\Adapter\Apns as ApnsAdapter;
 
 class PushWords extends Command {
 
@@ -42,10 +44,37 @@ class PushWords extends Command {
 	 */
 	public function fire()
 	{
-		// PushNotification::app('IOS')
-		// 	->to('f63735137f2ffa53590b3b0f05c4502a6086c055d698950885702a51b4232d06')
-		// 	->send('Коля, я кажись настроил пуш');
-		$this->base_cat();
+		$rawdevices = [];
+		$users = User::all();
+		foreach ($users as $user) {
+			array_push($rawdevices, PushNotification::Device($user->device, ['badge' => 1]));
+		}
+		$devices = PushNotification::DeviceCollection($rawdevices);
+		$word = WordCard::find(Setting::first()->word_id);
+		PushNotification::app('IOS')
+			->to($devices)
+			->send($word->word." - новое слово для изучения", [
+				"custom" => [
+					"cdata" => [
+						"word_id" => $word->id,
+						"cat_id" => $word->cat_id
+					]
+				]
+			]);
+		// $this->check();
+		// $this->base_cat();
+	}
+	
+	public function check() {
+		$pushManager = PushNotification::PushManager('Development');
+
+		$apnsAdapter = PushNotification::ApnsAdapter([
+			'certificate' => $_ENV['APNS_CERTIFICATE'],
+			'passPhrase'  => $_ENV['APNS_PASSPHRASE'],
+		]);
+
+		$feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
+		var_dump($feedback);
 	}
 
 	public function base_cat() {
@@ -103,14 +132,14 @@ class PushWords extends Command {
 		// 	);
 			try {
 				PushNotification::app('IOS')
-					->to($user['username'])
+					->to($user->username)
 					->send('Hello World, i`m a push message');
 			} catch (Exception $e){
 				$this->error($e->getMessage());
 			} finally {
 				$this->info('Word "'.$word['word'].'"'.'('.$word['id'].')'.' has pushed to user '.$user['username'] );
-				$user->word_id = $word['id'];
-				$user->save();
+				// $user->word_id = $word['id'];
+				// $user->save();
 			}
 
 			

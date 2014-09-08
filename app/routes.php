@@ -55,8 +55,8 @@ Route::group(array('prefix' => 'api'), function() {
 	Route::post('/client/categories', ['before' => 'auth', 'uses' => 'CategoriesController@index']);
 // TODO
 	// Route::resource('users', 'UsersController');
-	
-	//update 
+
+	//update
 	// destroy
 	Route::post('users', 'UsersController@store');
 
@@ -91,7 +91,7 @@ Route::group(array('prefix' => 'api'), function() {
 		Route::post('{user_id}/subscribe', 'UsersController@subscribe');
 		Route::post('{user_id}/unsubscribe', 'UsersController@unsubscribe');
 		Route::post('{user_id}/subscriptions', 'UsersController@subscriptions');
-		
+
 		Route::post('{user_id}/teststart', 'TestsController@start');
 		Route::post('{user_id}/testend', 'TestsController@result');
 	});

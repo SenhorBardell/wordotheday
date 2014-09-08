@@ -73,13 +73,43 @@ class UsersController extends ApiController {
 	public function purchase() {
 		$user = User::find(Input::get('user_id'));
 
-		if (!$user)
-			return $this->respondNotFound('User not found');
+		// if (!$user)
+		// 	return $this->respondNotFound('User not found');
 
 		if (!Input::has('data'))
 			return $this->respondInsufficientPrivileges('Data not fount');
 
-		return Response::json(['user_id' => $user->id, 'balance' => $user->balance]);
+		$client = new \GuzzleHttp\Client();
+
+		$response = $client->post('https://sandbox.itunes.apple.com/verifyReceipt', ['json' => ['receipt-data' => Input::get('data')]]);
+
+		if ($response->getStatusCode() != 200)
+			return $this->respondServerError();
+
+		$body = $response->json();
+
+		if ($body['status'] != '0')
+			return $this->respondServerError('Something went wrong');
+
+		$product_id = $body['receipt']['product_id'];
+
+		if ($product_id == 'wordoftheday.purchases.moneyPack1')
+			$user->balance += 500;
+
+		elseif ($product_id == 'wordoftheday.purchases.moneyPack2')
+			$user->balance += 1500;
+
+		elseif ($product_id == 'wordoftheday.purchases.moneyPack3')
+			$user->balance += 7500;
+
+		if ($user->save())
+			return Response::json(['balance' => $user->balance]);
+
+		// if ($body)
+
+		// return Response::json($body);
+		
+		return $this->respondServerError('Something went wrong');
 	}
 
 	public function completesurvey() {

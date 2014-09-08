@@ -35,16 +35,18 @@ App::after(function($request, $response)
 
 Route::filter('auth', function()
 {
-	// if (Input::get('auth') != '123')
-		// return Response::json(array('error' => array('message' => 'unauthorized', 'status_code' => 403)));
 	$user = User::where('password', Input::get('auth'))->first();
-	if (!$user) return Response::json(array('status' => 'unauthorized'));
+	// if (!$user) return Response::json(array('status' => 'unauthorized'));
 });
 
 
 Route::filter('auth.basic', function()
 {
 	return Auth::basic();
+});
+
+Route::filter('auth.admin', function() {
+	if ( base64_decode(Request::header('Authentication')) != 'root') return Response::json(['status' => 'unauthenticated']); 
 });
 
 /*
