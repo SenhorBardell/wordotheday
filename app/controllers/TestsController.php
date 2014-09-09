@@ -29,7 +29,7 @@ class TestsController extends ApiController {
 			if ($balance < $s->general_cost)
 				return $this->respondInsufficientPrivileges('Not enough money');
 
-			if (Input::has('page'))
+			if (Input::get('page') == '0')
 				$user->balance = $user->balance - $s->general_cost;
 
 			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
@@ -44,7 +44,7 @@ class TestsController extends ApiController {
 			if ($balance < $category->test_price)
 			return $this->respondInsufficientPrivileges('Not enough money');
 
-			if (Input::has('page'))
+			if (Input::get('page') == '0')
 				$user->balance = $user->balance - $category->test_price;
 
 			$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
