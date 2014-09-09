@@ -73,11 +73,24 @@ class UsersController extends ApiController {
 	public function purchase() {
 		$user = User::find(Input::get('user_id'));
 
-		// if (!$user)
-		// 	return $this->respondNotFound('User not found');
+		if (!$user)
+			return $this->respondNotFound('User not found');
 
 		if (!Input::has('data'))
-			return $this->respondInsufficientPrivileges('Data not fount');
+			return $this->respondInsufficientPrivileges('Data not found');
+
+		if (Input::get('data') == '1') {
+			$category = Category::find(Input::get('pid'));
+
+			if (!$category)
+				return $this->respondNotFound('Category not found');
+
+			return Response::json(['balance' => $user->balance]);
+		}
+
+
+		// @TODO data = '1'
+		// @TODO pid product id
 
 		$client = new \GuzzleHttp\Client();
 
@@ -102,8 +115,13 @@ class UsersController extends ApiController {
 		elseif ($product_id == 'wordoftheday.purchases.moneyPack3')
 			$user->balance += 7500;
 
+		else {
+			$product_ar = explode('.', $product_id);
+			return Response::json(['balance' => $user->balance, 'test' => $product_ar]);
+		}
+
 		if ($user->save())
-			return Response::json(['balance' => $user->balance]);
+			return $this->respond(['balance' => $user->balance]);
 
 		// if ($body)
 
