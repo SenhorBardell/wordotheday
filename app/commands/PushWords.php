@@ -45,6 +45,8 @@ class PushWords extends Command {
             $cardsArr[$category->id] = $this->getSentWords($category->id, $category->wordcards);
         }
 
+        dd($cardsArr);
+
         $this->pushWords($cardsArr);
 	}
 	
@@ -110,7 +112,9 @@ class PushWords extends Command {
                 if ($wordsCount == SentWordCard::where('category_id', $id)->count())
                     SentWordCard::where('category_id', $id)->delete();
 
-                if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id]))
+                if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id])) {
+
+                }
                     array_push($pushWords, $newPushWord->toArray());
             }
         }
@@ -124,18 +128,17 @@ class PushWords extends Command {
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
         }
-        $devices = PushNotification::DeviceCollection($rawdevices);
 
+        $devices = PushNotification::DeviceCollection($rawdevices);
+// @TODO Proper push message body
         PushNotification::app('IOS')
             ->to($devices)
             ->send("Пора знакомится с новыми словами", [
                 "custom" => [
-                    "cdata" => [
-                        "word_id" => $word->id,
-                        "cat_id" => $word->cat_id
-                    ]
+                    "cdata" => $words
                 ]
             ]);
+        $this->info('Pushed');
 	}
 
 	/**

@@ -85,6 +85,22 @@ class UsersController extends ApiController {
 			if (!$category)
 				return $this->respondNotFound('Category not found');
 
+            if ($category == '-1') {
+                $product_id = Input::get('pids');
+
+                if ($product_id == 'wordoftheday.purchases.moneyPack1')
+                    $user->balance += 500;
+
+                elseif ($product_id == 'wordoftheday.purchases.moneyPack2')
+                    $user->balance += 1500;
+
+                elseif ($product_id == 'wordoftheday.purchases.moneyPack3')
+                    $user->balance += 7500;
+
+                if ($user->save())
+                    return $this->respond(['balance' => $user->balance]);
+            }
+
             if ($user->subscriptions()->where('category_id', $category->id)->first())
                 return $this->respondInsufficientPrivileges('Already subscribed');
 

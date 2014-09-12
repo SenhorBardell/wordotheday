@@ -43,7 +43,7 @@ class PushWord extends Command {
 
         $this->pushWord($dayWord);
 
-        $this->updateSettings($dayWord->id);
+        $this->updateSettings($dayWord['word_id']);
 
 	}
 
@@ -54,7 +54,7 @@ class PushWord extends Command {
      * @return void
      */
     public function updateSettings($id) {
-        $settings = Settings::first();
+        $settings = Setting::first();
         $settings->word_id = $id;
         $settings->save();
     }
@@ -130,6 +130,7 @@ class PushWord extends Command {
     }
 
 	public function pushWord($word) {
+        $word = WordCard::find($word['word_id']);
         $users = User::all();
 
         foreach ($users as $user) {
@@ -143,10 +144,11 @@ class PushWord extends Command {
                 "custom" => [
                     "cdata" => [
                         "word_id" => $word->id,
-                        "cat_id" => $word->cat_id
+                        "cat_id" => $word->category_id
                     ]
                 ]
             ]);
+        $this->info('Dayword pushed');
 	}
 
 	/**

@@ -43,11 +43,9 @@ class WordCardsController extends ApiController {
             $words[] = SentWordCard::where('category_id', $subscription->id)->get();
         }
 
-        return $words;
+//        $words = SentWordCard::last($lastWord)->get();
 
-        $words = SentWordCard::last($lastWord)->get();
-
-        $result['words'] = $words->toArray();
+        $result['words'] = $words;
         $result['id_dayword'] = Setting::first()->word_id;
 
         return $result;
