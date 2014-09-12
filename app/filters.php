@@ -36,7 +36,7 @@ App::after(function($request, $response)
 Route::filter('auth', function()
 {
 	$user = User::where('password', Input::get('auth'))->first();
-	// if (!$user) return Response::json(array('status' => 'unauthorized'));
+	 if (!$user) return Response::json(array('status' => 'unauthorized'));
 });
 
 
@@ -46,7 +46,7 @@ Route::filter('auth.basic', function()
 });
 
 Route::filter('auth.admin', function() {
-//	if ( base64_decode(Request::header('Authentication')) != 'root') return Response::json(['status' => 'unauthenticated']);
+	if ( base64_decode(Request::header('Authentication')) != 'root') return Response::json(['status' => 'unauthenticated']);
 });
 
 /*
