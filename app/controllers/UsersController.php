@@ -80,12 +80,10 @@ class UsersController extends ApiController {
             return $this->respondInsufficientPrivileges('Data not found');
 
         if (Input::get('data') == '1') {
-            $category = Category::find(Input::get('pid'));
 
-            if (!$category)
-                return $this->respondNotFound('Category not found');
+            $category_id = Input::get('pid');
 
-            if ($category == '-1') {
+            if ($category_id == '-1') {
                 $product_id = Input::get('pids');
 
                 if ($product_id == 'wordoftheday.purchases.moneyPack1')
@@ -100,6 +98,12 @@ class UsersController extends ApiController {
                 if ($user->save())
                     return $this->respond(['balance' => $user->balance]);
             }
+
+            $category = Category::find(Input::get('pid'));
+
+            if (!$category)
+                return $this->respondNotFound('Category not found');
+
 
             if ($user->subscriptions()->where('category_id', $category->id)->first())
                 return $this->respondInsufficientPrivileges('Already subscribed');
