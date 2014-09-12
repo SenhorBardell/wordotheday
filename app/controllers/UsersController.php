@@ -71,6 +71,7 @@ class UsersController extends ApiController {
     }
 
     public function purchase() {
+
         $user = User::find(Input::get('user_id'));
 
         if (!$user)
@@ -104,9 +105,9 @@ class UsersController extends ApiController {
             if (!$category)
                 return $this->respondNotFound('Category not found');
 
-
             if ($user->subscriptions()->where('category_id', $category->id)->first())
                 return $this->respondInsufficientPrivileges('Already subscribed');
+
 
             $user->subscriptions()->attach($category->id);
 
