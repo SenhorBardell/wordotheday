@@ -45,8 +45,6 @@ class PushWords extends Command {
             $cardsArr[$category->id] = $this->getSentWords($category->id, $category->wordcards);
         }
 
-        dd($cardsArr);
-
         $this->pushWords($cardsArr);
 	}
 	
