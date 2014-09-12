@@ -85,12 +85,13 @@ class UsersController extends ApiController {
 			if (!$category)
 				return $this->respondNotFound('Category not found');
 
+            if ($user->subscriptions()->where('category_id', $category->id)->first())
+                return $this->respondInsufficientPrivileges('Already subscribed');
+
+            $user->subscriptions()->attach($category->id);
+
 			return Response::json(['balance' => $user->balance]);
 		}
-
-
-		// @TODO data = '1'
-		// @TODO pid product id
 
 		$client = new \GuzzleHttp\Client();
 
@@ -116,6 +117,7 @@ class UsersController extends ApiController {
 			$user->balance += 7500;
 
 		else {
+            // @TODO Categories from transaction
 			$product_ar = explode('.', $product_id);
 			return Response::json(['balance' => $user->balance, 'test' => $product_ar]);
 		}
@@ -123,10 +125,6 @@ class UsersController extends ApiController {
 		if ($user->save())
 			return $this->respond(['balance' => $user->balance]);
 
-		// if ($body)
-
-		// return Response::json($body);
-		
 		return $this->respondServerError('Something went wrong');
 	}
 

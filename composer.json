@@ -8,7 +8,8 @@
 		"way/generators": "2.*",
 		"fzaninotto/faker": "v1.3.0",
 		"davibennun/laravel-push-notification": "dev-master",
-		"guzzlehttp/guzzle": "~4.0"
+		"guzzlehttp/guzzle": "~4.0",
+        "barryvdh/laravel-ide-helper": "1.*"
 	},
 	"autoload": {
 		"classmap": [
@@ -24,6 +25,7 @@
 	"scripts": {
 		"post-install-cmd": [
 			"$_ artisan clear-compiled",
+            "$_ artisan ide-helper:generate",
 			"$_ artisan optimize"
 		],
 		"post-update-cmd": [
