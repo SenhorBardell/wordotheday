@@ -163,17 +163,24 @@ class UsersController extends ApiController {
 		}
 
 		$user = User::find($user_id);
-		if ($user) {
-			if ($user->balance > 3) {
-				$user->balance--;
-				$user->save();
-				return $this->respond($this->transform($user));
-			} else {
-				return $this->respondInsufficientPrivileges('Not enough money');
-			}
-		} else {
-			return $this->respondNotFound('User not found');
-		}
+
+        if (!$user)
+            return $this->respondNotFound('User not found');
+
+        $s = Setting::first();
+        $lifeCost = $s->life_cost;
+
+        if ($user->balance > $lifeCost) {
+
+            $user->balance = $user->balance - $lifeCost;
+            if ($user->save())
+                return $this->respond($this->transform($user));
+        } else {
+            return $this->respondInsufficientPrivileges('Not enough money');
+        }
+
+        return $this->respondServerError();
+
 	}
 
 	/**
