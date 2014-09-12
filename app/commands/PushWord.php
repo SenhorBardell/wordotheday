@@ -6,14 +6,14 @@ use Symfony\Component\Console\Input\InputArgument;
 use Sly\NotificationPusher\PushManager,
     Sly\NotificationPusher\Adapter\Apns as ApnsAdapter;
 
-class PushWords extends Command {
+class PushWord extends Command {
 
 	/**
 	 * The console command name.
 	 *
 	 * @var string
 	 */
-	protected $name = 'push:words';
+	protected $name = 'push:word';
 
 	/**
 	 * The console command description.
@@ -39,16 +39,25 @@ class PushWords extends Command {
 	 */
 	public function fire()
 	{
-        $categories = Category::all();
+        $dayWord = $this->getDayWord();
 
-        foreach ($categories as $category) {
-            $cardsArr[$category->id] = $this->getSentWords($category->id, $category->wordcards);
-        }
+        $this->pushWord($dayWord);
 
-        dd($cardsArr);
+        $this->updateSettings($dayWord['word_id']);
 
-        $this->pushWords($cardsArr);
 	}
+
+    /**
+     * Update Word of the day in settings
+     *
+     * @param int $id
+     * @return void
+     */
+    public function updateSettings($id) {
+        $settings = Setting::first();
+        $settings->word_id = $id;
+        $settings->save();
+    }
 	
 	public function check() {
 		$pushManager = PushNotification::PushManager('Development');
@@ -112,9 +121,7 @@ class PushWords extends Command {
                 if ($wordsCount == SentWordCard::where('category_id', $id)->count())
                     SentWordCard::where('category_id', $id)->delete();
 
-                if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id])) {
-
-                }
+                if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id]))
                     array_push($pushWords, $newPushWord->toArray());
             }
         }
@@ -122,23 +129,26 @@ class PushWords extends Command {
         return $pushWords;
     }
 
-	public function pushWords($words) {
+	public function pushWord($word) {
+        $word = WordCard::find($word['word_id']);
         $users = User::all();
 
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
         }
-
         $devices = PushNotification::DeviceCollection($rawdevices);
-// @TODO Proper push message body
+
         PushNotification::app('IOS')
             ->to($devices)
-            ->send("Пора знакомится с новыми словами", [
+            ->send($word->word." - новое слово для изучения", [
                 "custom" => [
-                    "cdata" => $words
+                    "cdata" => [
+                        "word_id" => $word->id,
+                        "cat_id" => $word->category_id
+                    ]
                 ]
             ]);
-        $this->info('Pushed');
+        $this->info('Dayword pushed');
 	}
 
 	/**

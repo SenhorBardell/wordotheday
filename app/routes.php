@@ -67,15 +67,14 @@ Route::group(array('prefix' => 'api'), function() {
 
 		Route::get('{user_id}/firstword', 'UsersController@firstword');
 
-		// Hardcoded
 		Route::post('sentwords', 'WordCardsController@sentwords');
 
+        Route::post('completesurvey', 'UsersController@completesurvey');
+
+        // Hardcoded
 		Route::post('purchase', 'UsersController@purchase');
 
 		Route::post('restore', 'UsersController@restore');
-
-		Route::post('completesurvey', 'UsersController@completesurvey');
-
 		// =========
 
 		Route::post('{user_id}/addword', 'MwordsController@add_word');

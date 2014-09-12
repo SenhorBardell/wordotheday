@@ -5,7 +5,7 @@ use Helpers\Transformers\WordTransformer;
 class WordCardsController extends ApiController {
 
 	/**
-	* @var Bardell\Transformers\WordCardTransformer
+	* @var Helpers\Transformers\WordCardTransformer
 	*/
 	protected $wordTransformer;
 
@@ -33,19 +33,22 @@ class WordCardsController extends ApiController {
 	 * @return Response
 	 */
 	public function sentwords() {
-		$lastWord = Input::get('id_last_word');
 		$user = User::find(Input::get('user_id'));
+        $lastWordID = Input::get('id_last_word');
 
-		$words = WordCard::take(19)->get()->toArray();
-		$word = WordCard::find(Setting::first()->word_id);
+        if (!$user)
+            return $this->respondNotFound('user not found');
 
-		array_push($words, $word);
+        foreach ($user->subscriptions as $subscription) {
+            $words[] = SentWordCard::where('category_id', $subscription->id)->get();
+        }
 
-		// Mock
-		return Response::json([
-			'id_dayword' => Setting::first()->word_id,
-			'words' => $words
-		]);
+//        $words = SentWordCard::last($lastWord)->get();
+
+        $result['words'] = $words;
+        $result['id_dayword'] = Setting::first()->word_id;
+
+        return $result;
 	}
 
 	public function randomwords() {
@@ -87,7 +90,7 @@ class WordCardsController extends ApiController {
 		$category->save();
 
 		if ($wordcard) return $this->respond($wordcard);
-		else return $response->respondServerError();
+		else return $this->respondServerError();
 	}
 
 	/**

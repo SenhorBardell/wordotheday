@@ -46,7 +46,7 @@ Route::filter('auth.basic', function()
 });
 
 Route::filter('auth.admin', function() {
-	if ( base64_decode(Request::header('Authentication')) != 'root') return Response::json(['status' => 'unauthenticated']); 
+//	if ( base64_decode(Request::header('Authentication')) != 'root') return Response::json(['status' => 'unauthenticated']);
 });
 
 /*

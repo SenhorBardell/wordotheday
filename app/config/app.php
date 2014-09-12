@@ -120,7 +120,8 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
 		'Way\Generators\GeneratorsServiceProvider',
-		'Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider'
+		'Davibennun\LaravelPushNotification\LaravelPushNotificationServiceProvider',
+        'Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider',
 
 	),
 
