@@ -27,20 +27,22 @@ Route::group(array('prefix' => 'api'), function() {
 		return Response::json(['Authenticated'], 200);
 	}));
 
-	Route::resource('words', 'WordCardsController');
-	Route::get('randomwords', 'WordCardsController@randomwords');
+//	Route::get('randomwords', 'WordCardsController@randomwords');
 
-	/* Moderation */
-
-	Route::get('moderate/words', 'MwordsController@show_all');
-	Route::get('moderate/words/{word_id}', 'MwordsController@show');
-	Route::put('moderate/words/{word_id}', 'MwordsController@update');
-	Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
-	Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
-	Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
-	Route::post('moderate/words/{word_id}/acceptpush', 'MwordsController@acceptPush');
 
 	Route::group(['before' => 'auth.admin'], function() {
+
+        Route::resource('words', 'WordCardsController');
+
+        /* Moderation */
+
+        Route::get('moderate/words', 'MwordsController@show_all');
+        Route::get('moderate/words/{word_id}', 'MwordsController@show');
+        Route::put('moderate/words/{word_id}', 'MwordsController@update');
+        Route::delete('moderate/words/{word_id}', 'MwordsController@decline');
+        Route::delete('moderate/{word_id}/remove', 'MwordsController@remove_word');
+        Route::post('moderate/words/{word_id}/changestatus', 'MwordsController@change_status');
+        Route::post('moderate/words/{word_id}/acceptpush', 'MwordsController@acceptPush');
 
 		/* Category */
 
@@ -50,14 +52,14 @@ Route::group(array('prefix' => 'api'), function() {
 
 		Route::get('users', 'UsersController@index');
 
+        Route::resource('users', 'UsersController');
+
+        Route::post('settings', 'SettingsController@update');
+
 	});
 
 	Route::post('/client/categories', ['before' => 'auth', 'uses' => 'CategoriesController@index']);
-// TODO
-	// Route::resource('users', 'UsersController');
 
-	//update
-	// destroy
 	Route::post('users', 'UsersController@store');
 
 	Route::get('user/{user_id}/words', 'MwordsController@show_words');
@@ -71,14 +73,13 @@ Route::group(array('prefix' => 'api'), function() {
 
         Route::post('completesurvey', 'UsersController@completesurvey');
 
-        // Hardcoded
+        // Not checking on any transactions
 		Route::post('purchase', 'UsersController@purchase');
 
+        // Resture user not implemented
 		Route::post('restore', 'UsersController@restore');
-		// =========
 
 		Route::post('{user_id}/addword', 'MwordsController@add_word');
-		// Route::post('{user_id}/restore', 'UserController@restore');
 
 		Route::get('{user_id}/getbonus', 'UsersController@getbonus');
 
@@ -99,11 +100,10 @@ Route::group(array('prefix' => 'api'), function() {
 	/* Settings */
 
 	Route::get('settings', 'SettingsController@index');
-	Route::post('settings', 'SettingsController@update');
 
 });
 
-Route::match(array('GET', 'POST'), '/oauth', 'OauthController@login');
+//Route::match(array('GET', 'POST'), '/oauth', 'OauthController@login');
 
 Route::any('{slug}', function() {
 	return Redirect::to('/');

@@ -131,7 +131,7 @@ class PushWord extends Command {
 
 	public function pushWord($word) {
         $word = WordCard::find($word['word_id']);
-        $users = User::all();
+        $users = User::whereNotNull('device')->get();
 
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
@@ -148,7 +148,7 @@ class PushWord extends Command {
                     ]
                 ]
             ]);
-        $this->info('Dayword pushed');
+        $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
 
 	/**

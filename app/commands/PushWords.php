@@ -40,9 +40,10 @@ class PushWords extends Command {
 	public function fire()
 	{
         $categories = Category::all();
+        $cardsArr = [];
 
         foreach ($categories as $category) {
-            $cardsArr[$category->id] = $this->getSentWords($category->id, $category->wordcards);
+            $cardsArr = array_merge($cardsArr, $this->getSentWords($category->id, $category->wordcards));
         }
 
         $this->pushWords($cardsArr);
@@ -59,32 +60,6 @@ class PushWords extends Command {
 		$feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
 		var_dump($feedback);
 	}
-
-    public function getDayWord() {
-        $words = WordCard::all();
-        $wordsCount = WordCard::count();
-
-        while (true) {
-
-            $randomWord = $words[rand(0, $words->count() - 1)];
-
-            if (!$randomWord)
-                continue;
-
-            if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', 0)) {
-
-                if ($wordsCount == SentWordCard::where('category_id', 0)->count())
-                    SentWordCard::where('category_id', 0)->delete();
-
-                if ($dayWord = SentWordCard::create(['category_id' => 0, 'word_id' => $randomWord->id]))
-                    break;
-
-            }
-
-        }
-
-        return $dayWord->toArray();
-    }
 
     /**
      * @param $id Category id
@@ -113,7 +88,10 @@ class PushWords extends Command {
                 if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id])) {
 
                 }
-                    array_push($pushWords, $newPushWord->toArray());
+                    array_push($pushWords, [
+                        'word_id' => $newPushWord->id,
+                        'category_id' => $newPushWord->category_id,
+                    ]);
             }
         }
 
@@ -121,7 +99,20 @@ class PushWords extends Command {
     }
 
 	public function pushWords($words) {
-        $users = User::all();
+
+        function implode_r($glue, array $arr) {
+            $ret = '';
+            foreach ($arr as $piece) {
+                if (is_array($piece))
+                    $ret .= $glue.implode_r($glue, $piece);
+                else
+                    $ret .= $glue.$piece;
+            }
+
+            return $ret;
+        }
+
+        $users = User::whereNotNull('device')->get();
 
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
@@ -136,7 +127,8 @@ class PushWords extends Command {
                     "cdata" => $words
                 ]
             ]);
-        $this->info('Pushed');
+        $this->info('Pushed wordcards');
+        $this->info(implode_r(', ', $words));
 	}
 
 	/**

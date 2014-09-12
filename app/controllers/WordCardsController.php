@@ -40,19 +40,27 @@ class WordCardsController extends ApiController {
         if (!$user)
             return $this->respondNotFound('user not found');
 
+        $lastWord = SentWordCard::where('word_id', $lastWordID)->first();
+
+        if ($lastWordID == '-1') {
+            $dayWords = SentWordCard::where('category_id', 0)->take(20)->get();
+        } else {
+            $dayWords = SentWordCard::where('category_id', 0)->where('id', '>=', $lastWord->id)->get();
+        }
+
         foreach ($user->subscriptions as $subscription) {
-            $catwords = SentWordCard::where('category_id', $subscription->id)->get()->toArray();
+            $catwords = SentWordCard::where('category_id', $subscription->id)->get();
             foreach ($catwords as $catword) {
-                array_push($words, [
-                    'id' => $catword['word_id'],
-                    'category_id' => $catword['category_id'],
-                    'word' => $catword['word'],
-                    'answer' => $catword['answer']
-                ]);
+                $word = WordCard::find($catword->word_id);
+                array_push($words, $word);
             }
         }
 
-//        $words = SentWordCard::last($lastWord)->get();
+        foreach ($dayWords as $dayWord) {
+            $word = WordCard::find($dayWord->word_id)->toArray();
+            $word['type'] = '1';
+            array_push($words, $word);
+        }
 
         $result['words'] = $words;
         $result['id_dayword'] = Setting::first()->word_id;
