@@ -35,12 +35,21 @@ class WordCardsController extends ApiController {
 	public function sentwords() {
 		$user = User::find(Input::get('user_id'));
         $lastWordID = Input::get('id_last_word');
+        $words = [];
 
         if (!$user)
             return $this->respondNotFound('user not found');
 
         foreach ($user->subscriptions as $subscription) {
-            $words[] = SentWordCard::where('category_id', $subscription->id)->get();
+            $catwords = SentWordCard::where('category_id', $subscription->id)->get()->toArray();
+            foreach ($catwords as $catword) {
+                array_push($words, [
+                    'id' => $catword['word_id'],
+                    'category_id' => $catword['category_id'],
+                    'word' => $catword['word'],
+                    'answer' => $catword['answer']
+                ]);
+            }
         }
 
 //        $words = SentWordCard::last($lastWord)->get();

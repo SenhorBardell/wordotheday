@@ -207,41 +207,30 @@ class UsersController extends ApiController {
         if ($validation->fails())
             return $this->respondInsufficientPrivileges($validation->messages()->all());
 
-        $oldUser = User::where('username', Input::get('username'))->first();
+        $user = User::create(array(
+            'username' => Input::get('username'),
+            'password' => str_random(40),
+            'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()['word_id'],
+            'balance' => Input::has('balance') ? Input::get('balance') : '100',
+            // 'overal_standing' => 0,
+            // 'max_result' => 0,
+        ));
 
-        if ($oldUser) {
+        return $user;
 
-            $oldUser->password = str_random(40);
-            $oldUser->save();
-
-            return $oldUser;
-
-        } else {
-            $user = User::create(array(
-                'username' => Input::get('username'),
-                'password' => str_random(40),
-                'word_id' => SentWordCard::orderBy('created_at', 'desc')->first()['word_id'],
-                'balance' => Input::has('balance') ? Input::get('balance') : '100',
-                // 'overal_standing' => 0,
-                // 'max_result' => 0,
-            ));
-
-            return $user;
-
-            // if ($user)
-            // 	return $this->respond(array(
-            // 		'username' => $user['username'],
-            // 		'max_result' => $user['max_result'],
-            // 		'overal_standing' => $user['overal_standing'],
-            // 		'balance' => $user['balance'],
-            // 		'id' => $user['id'],
-            // 		'password' => $user['password'],
-            // 		'word_id' => $user['word_id']
-            // 	));
+        // if ($user)
+        // 	return $this->respond(array(
+        // 		'username' => $user['username'],
+        // 		'max_result' => $user['max_result'],
+        // 		'overal_standing' => $user['overal_standing'],
+        // 		'balance' => $user['balance'],
+        // 		'id' => $user['id'],
+        // 		'password' => $user['password'],
+        // 		'word_id' => $user['word_id']
+        // 	));
 
 
-            return $this->respondServerError('Error creating user');
-        }
+        return $this->respondServerError('Error creating user');
 
     }
 
