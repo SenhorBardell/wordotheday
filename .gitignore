@@ -8,3 +8,6 @@ composer.phar
 .env.php
 .DS_Store
 Thumbs.db
+.vagrant/
+Vagrantfile
+_ide_helper.php
