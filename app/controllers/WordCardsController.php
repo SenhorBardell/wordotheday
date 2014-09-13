@@ -49,16 +49,21 @@ class WordCardsController extends ApiController {
         }
 
         foreach ($user->subscriptions as $subscription) {
-            $catwords = SentWordCard::where('category_id', $subscription->id)->get();
+//            if ($lastWordID == '-1')
+                $catwords = SentWordCard::where('category_id', $subscription->id)->orderBy('id', 'DESC')->take(20)->get();
+//            else
+//                $catwords = SentWordCard::where('category_id', $subscription->id)->where('id', '>=', $lastWord->id)->get();
+
             foreach ($catwords as $catword) {
                 $word = WordCard::find($catword->word_id);
+                $word['type'] = 1;
                 array_push($words, $word);
             }
         }
 
         foreach ($dayWords as $dayWord) {
             $word = WordCard::find($dayWord->word_id)->toArray();
-            $word['type'] = '1';
+            $word['type'] = '0';
             array_push($words, $word);
         }
 
@@ -68,7 +73,13 @@ class WordCardsController extends ApiController {
         return $result;
 	}
 
-	public function randomwords() {
+    /**
+     * Get random words
+     *
+     * @deprecated
+     * @return array $words
+     */
+    public function randomwords() {
 
 		$return = array();
 		$amount = 20;

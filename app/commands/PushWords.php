@@ -43,7 +43,13 @@ class PushWords extends Command {
         $cardsArr = [];
 
         foreach ($categories as $category) {
-            $cardsArr = array_merge($cardsArr, $this->getSentWords($category->id, $category->wordcards));
+            $this->info('Looking at '.$category->id);
+            $card = $this->getSentWords($category->id, $category->wordcards);
+
+            if (empty($card))
+                continue;
+
+            array_push($cardsArr, $card[0]);
         }
 
         $this->pushWords($cardsArr);
@@ -68,11 +74,12 @@ class PushWords extends Command {
      */
     public function getSentWords($id, $words) {
         $pushWords = [];
-        while (count($pushWords) < 3) {
+        $state = 1;
+        while ($state < 3) {
 
             $wordsCount = $words->count();
 
-            if ($wordsCount < 3)
+            if ($wordsCount == 0)
                 return [];
 
             $randomWord = $words[rand(0, $wordsCount - 1)];
@@ -80,18 +87,29 @@ class PushWords extends Command {
             if (!$randomWord)
                 continue;
 
+            $this->comment("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
+
             if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) {
 
-                if ($wordsCount == SentWordCard::where('category_id', $id)->count())
+                if ($wordsCount == SentWordCard::where('category_id', $id)->count()) {
                     SentWordCard::where('category_id', $id)->delete();
+                    $this->info('Count reached');
+                }
 
                 if ($newPushWord = SentWordCard::create(['category_id' => $id, 'word_id' => $randomWord->id])) {
 
+                    $this->comment('New sent word created: '.$randomWord->id.' ('.$id.')');
+                    if ($state == 1) {
+                        array_push($pushWords, [
+                            'word_id' => $newPushWord->id,
+                            'category_id' => $newPushWord->category_id,
+                        ]);
+                        $this->info('Sent word pushed to queue: '.$randomWord->id.' ('.$id.')');
+                    }
+
                 }
-                    array_push($pushWords, [
-                        'word_id' => $newPushWord->id,
-                        'category_id' => $newPushWord->category_id,
-                    ]);
+
+                $state++;
             }
         }
 
@@ -104,7 +122,7 @@ class PushWords extends Command {
             $ret = '';
             foreach ($arr as $piece) {
                 if (is_array($piece))
-                    $ret .= $glue.implode_r($glue, $piece);
+                    $ret .= '; '.implode_r($glue, $piece);
                 else
                     $ret .= $glue.$piece;
             }
