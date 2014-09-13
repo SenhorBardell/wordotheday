@@ -43,7 +43,7 @@ class WordCardsController extends ApiController {
         $lastWord = SentWordCard::where('word_id', $lastWordID)->first();
 
         if ($lastWordID == '-1') {
-            $dayWords = SentWordCard::where('category_id', 0)->take(20)->get();
+            $dayWords = SentWordCard::where('category_id', 0)->orderBy('id', 'DESC')->take(20)->get();
         } else {
             $dayWords = SentWordCard::where('category_id', 0)->where('id', '>=', $lastWord->id)->get();
         }
