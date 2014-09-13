@@ -50,7 +50,7 @@ class WordCardsController extends ApiController {
 
         foreach ($user->subscriptions as $subscription) {
 //            if ($lastWordID == '-1')
-                $catwords = SentWordCard::where('category_id', $subscription->id)->orderBy('id', 'DESC')->take(20)->get();
+                $catwords = SentWordCard::where('category_id', $subscription->id)->get();
 //            else
 //                $catwords = SentWordCard::where('category_id', $subscription->id)->where('id', '>=', $lastWord->id)->get();
 
