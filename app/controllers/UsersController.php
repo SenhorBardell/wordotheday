@@ -181,10 +181,12 @@ class UsersController extends ApiController {
             return $this->respondInsufficientPrivileges($validator->messages()->all());
         }
 
+        $s = Setting::first();
+
         $user = User::find($user_id);
         if ($user) {
-            if ($user->balance > 3) {
-                $user->balance--;
+            if ($user->balance > $s->life_cost) {
+                $user->balance = $user->balance - $s->life_cost;
                 $user->save();
                 return $this->respond($this->transform($user));
             } else {
