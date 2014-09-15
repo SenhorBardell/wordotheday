@@ -101,7 +101,7 @@ class PushWords extends Command {
                     $this->comment('New sent word created: '.$randomWord->id.' ('.$id.')');
                     if ($state == 1) {
                         array_push($pushWords, [
-                            'word_id' => $newPushWord->id,
+                            'word_id' => $newPushWord->word_id,
                             'category_id' => $newPushWord->category_id,
                         ]);
                         $this->info('Sent word pushed to queue: '.$randomWord->id.' ('.$id.')');
@@ -135,6 +135,11 @@ class PushWords extends Command {
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
         }
+
+//        foreach ($words as $word) {
+//            $wordcard = WordCard::find($word['word_id']);
+//            $resultWords[] = $word['word_id'];
+//        }
 
         $devices = PushNotification::DeviceCollection($rawdevices);
 // @TODO Proper push message body

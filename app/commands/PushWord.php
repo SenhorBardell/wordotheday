@@ -143,8 +143,11 @@ class PushWord extends Command {
             ->send($word->word." - новое слово для изучения", [
                 "custom" => [
                     "cdata" => [
+                        [
                         "word_id" => $word->id,
-                        "cat_id" => $word->category_id
+                        "cat_id" => $word->category_id,
+                        "type" => 0,
+                       ]
                     ]
                 ]
             ]);
