@@ -45,7 +45,7 @@ class WordCardsController extends ApiController {
         if ($lastWordID == '-1') {
             $dayWords = SentWordCard::where('category_id', 0)->orderBy('id', 'DESC')->take(20)->get();
         } else {
-            $dayWords = SentWordCard::where('category_id', 0)->where('id', '>=', $lastWord->id)->get();
+            $dayWords = SentWordCard::where('category_id', 0)->where('id', '>', $lastWord->id)->get();
         }
 
         foreach ($user->subscriptions as $subscription) {
@@ -62,9 +62,11 @@ class WordCardsController extends ApiController {
         }
 
         foreach ($dayWords as $dayWord) {
-            $word = WordCard::find($dayWord->word_id)->toArray();
-            $word['type'] = '0';
-            array_push($words, $word);
+            if (!$dayWord->word_id == $lastWordID) {
+                $word = WordCard::find($dayWord->word_id)->toArray();
+                $word['type'] = '0';
+                array_push($words, $word);
+            }
         }
 
         $result['words'] = $words;

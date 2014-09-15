@@ -185,7 +185,7 @@ class UsersController extends ApiController {
 
         $user = User::find($user_id);
         if ($user) {
-            if ($user->balance > $s->life_cost) {
+            if ($user->balance >= $s->life_cost) {
                 $user->balance = $user->balance - $s->life_cost;
                 $user->save();
                 return $this->respond($this->transform($user));
