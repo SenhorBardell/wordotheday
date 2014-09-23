@@ -146,9 +146,9 @@ class PushWord extends Command {
                         [
                         "word_id" => $word->id,
                         "cat_id" => $word->category_id,
-                        "type" => 0,
                        ]
-                    ]
+                    ],
+                    "type" => 0,
                 ]
             ]);
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
