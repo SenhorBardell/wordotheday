@@ -34,54 +34,59 @@ class WordCardsController extends ApiController {
 	 */
 	public function sentwords() {
 		$user = User::find(Input::get('user_id'));
-        $lastWordID = Input::get('id_last_word');
-        $words = [];
+		$lastWordID = Input::get('id_last_word');
+		$words = [];
 
-        if (!$user)
-            return $this->respondNotFound('user not found');
+		if (!$user)
+			return $this->respondNotFound('user not found');
 
-        $lastWord = SentWordCard::where('word_id', $lastWordID)->first();
+		$lastWord = SentWordCard::where('word_id', $lastWordID)->first();
 
-        if ($lastWordID == '-1') {
-            $dayWords = SentWordCard::where('category_id', 0)->orderBy('id', 'DESC')->take(20)->get();
-        } else {
-            $dayWords = SentWordCard::where('category_id', 0)->where('id', '>', $lastWord->id)->get();
-        }
+		if ($lastWordID == '-1') {
+			$dayWords = SentWordCard::where('category_id', 0)->orderBy('id', 'DESC')->take(20)->get();
+		} else {
+			$dayWords = SentWordCard::where('category_id', 0)->where('id', '>', $lastWord->id)->get();
+		}
 
-        foreach ($user->subscriptions as $subscription) {
+		foreach ($user->subscriptions as $subscription) {
 //            if ($lastWordID == '-1')
-                $catwords = SentWordCard::where('category_id', $subscription->id)->get();
+				$catwords = SentWordCard::where('category_id', $subscription->id)->get();
 //            else
 //                $catwords = SentWordCard::where('category_id', $subscription->id)->where('id', '>=', $lastWord->id)->get();
 
-            foreach ($catwords as $catword) {
-                $word = WordCard::find($catword->word_id);
-                $word['type'] = 1;
-                array_push($words, $word);
-            }
-        }
+			foreach ($catwords as $catword) {
+				$word = WordCard::find($catword->word_id);
+				$word['type'] = 1;
+				array_push($words, $word);
+			}
+		}
 
-        foreach ($dayWords as $dayWord) {
-            if (!$dayWord->word_id == $lastWordID) {
-                $word = WordCard::find($dayWord->word_id)->toArray();
-                $word['type'] = '0';
-                array_push($words, $word);
-            }
-        }
+		$daywordID = Setting::first()->word_id;
 
-        $result['words'] = $words;
-        $result['id_dayword'] = Setting::first()->word_id;
+		foreach ($dayWords as $dayWord) {
 
-        return $result;
+			if ($dayWord->word_id == $daywordID)
+				continue;
+
+			$word = WordCard::find($dayWord->word_id)->toArray();
+			$word['type'] = '0';
+			array_push($words, $word);
+		}
+
+
+		$result['words'] = $words;
+		$result['id_dayword'] = $daywordID;
+
+		return $result;
 	}
 
-    /**
-     * Get random words
-     *
-     * @deprecated
-     * @return array $words
-     */
-    public function randomwords() {
+	/**
+	 * Get random words
+	 *
+	 * @deprecated
+	 * @return array $words
+	 */
+	public function randomwords() {
 
 		$return = array();
 		$amount = 20;
