@@ -131,7 +131,7 @@ class PushWord extends Command {
 
 	public function pushWord($word) {
         $word = WordCard::find($word['word_id']);
-        $users = User::whereNotNull('device')->get();
+        $users = User::where('device', '<>', '')->get();
 
         foreach ($users as $user) {
             $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);

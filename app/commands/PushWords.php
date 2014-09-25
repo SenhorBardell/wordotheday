@@ -42,6 +42,9 @@ class PushWords extends Command {
         $categories = Category::all();
         $cardsArr = [];
 
+        $dayWord = WordCard::find(Setting::first()->word_id);
+        array_push($cardsArr, ['word_id' => $dayWord->id, 'category_id' => $dayWord->category_id]);
+
         foreach ($categories as $category) {
             $this->info('Looking at '.$category->id);
             $card = $this->getSentWords($category->id, $category->wordcards);
@@ -75,7 +78,7 @@ class PushWords extends Command {
     public function getSentWords($id, $words) {
         $pushWords = [];
         $state = 1;
-        while ($state < 3) {
+        while ($state <= 3) {
 
             $wordsCount = $words->count();
 
@@ -87,7 +90,7 @@ class PushWords extends Command {
             if (!$randomWord)
                 continue;
 
-            $this->comment("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
+            $this->info("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
 
             if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) {
 
@@ -103,6 +106,7 @@ class PushWords extends Command {
                         array_push($pushWords, [
                             'word_id' => $newPushWord->word_id,
                             'category_id' => $newPushWord->category_id,
+//                            'type' => 1
                         ]);
                         $this->info('Sent word pushed to queue: '.$randomWord->id.' ('.$id.')');
                     }
@@ -130,10 +134,11 @@ class PushWords extends Command {
             return $ret;
         }
 
-        $users = User::whereNotNull('device')->get();
+        $users = User::where('device', '<>', '')->get();
 
         foreach ($users as $user) {
-            $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
+            if ($user->subscriptions()->count() > 0)
+                $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
         }
 
 //        foreach ($words as $word) {
@@ -147,7 +152,8 @@ class PushWords extends Command {
             ->to($devices)
             ->send("Пора знакомится с новыми словами", [
                 "custom" => [
-                    "cdata" => $words
+                    "cdata" => $words,
+                    "type" => 1
                 ]
             ]);
         $this->info('Pushed wordcards');
