@@ -60,11 +60,12 @@ class UsersController extends ApiController {
      */
     public function getbonus($id) {
         $user = User::find($id);
+		$dayWordId = Setting::first()->word_id;
 
-        if ($user->word_id == '0')
+        if ($user->word_id == $dayWordId)
             return $this->respondInsufficientPrivileges('User has already got bonus');
 
-        $user->word_id = 0;
+        $user->word_id = $dayWordId;
         $user->balance = $user->balance + Setting::first()->daily_bonus;
         $user->save();
         return $this->respond($this->transform($user));
