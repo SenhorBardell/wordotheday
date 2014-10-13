@@ -34,47 +34,80 @@ class WordCardsController extends ApiController {
 	 */
 	public function sentwords() {
 		$user = User::find(Input::get('user_id'));
-		$lastWordID = Input::get('id_last_word');
+		$lastWordID = Input::has('id_last_word') ? Input::get('id_last_word') : -1;
 		$words = [];
 
 		if (!$user)
 			return $this->respondNotFound('user not found');
 
-		$lastWord = SentWordCard::where('word_id', $lastWordID)->first();
-
-		if ($lastWordID == '-1') {
-			$dayWords = SentWordCard::where('category_id', 0)->orderBy('id', 'DESC')->take(20)->get();
-		} else {
-			$dayWords = SentWordCard::where('category_id', 0)->where('id', '>', $lastWord->id)->get();
-		}
-
-		foreach ($user->subscriptions as $subscription) {
-//            if ($lastWordID == '-1')
-				$catwords = SentWordCard::where('category_id', $subscription->id)->get();
-//            else
-//                $catwords = SentWordCard::where('category_id', $subscription->id)->where('id', '>=', $lastWord->id)->get();
-
-			foreach ($catwords as $catword) {
-				$word = WordCard::find($catword->word_id);
-				$word['type'] = 1;
-				array_push($words, $word);
+		function sortByArray(Array $array, Array $orderArray) {
+			$ordered = [];
+			foreach ($orderArray as $key => $value) {
+				foreach ($array as $elem) {
+					if ($elem['id'] == $value)
+						$ordered[] = $elem;
+				}
 			}
+			return $ordered;
 		}
 
+		$lastWord = SentWordCard::where('word_id', $lastWordID)->orderBy('id', 'DESC')->first();
 		$daywordID = Setting::first()->word_id;
 
-		foreach ($dayWords as $dayWord) {
+		if ($lastWordID == '-1') {
 
-			if ($dayWord->word_id == $daywordID)
-				continue;
+			/* just registered */
+			$dayWords = SentWordCard::where('category_id', 0)->take(20)->get();
 
-			$word = WordCard::find($dayWord->word_id)->toArray();
-			$word['type'] = '0';
-			array_push($words, $word);
+		} else {
+
+			/* usual case */
+			$dayWords = SentWordCard::where('category_id', '0')->where('id', '>', $lastWord->id)->orderBy('id', 'DESC')->take(20)->get();
+			//@TODO Bug if subscriptions is more than 20
+
 		}
 
+		if ($lastWordID != $daywordID) {
+
+			foreach ($dayWords as $dayWord) {
+				$dayWordIds[] = $dayWord->word_id;
+			}
+
+			$tempWords = WordCard::whereIn('id', $dayWordIds)->get()->toArray();
+			$properOrder = array_reverse(sortByArray($tempWords, $dayWordIds));
+
+			foreach ($properOrder as $word) {
+				$word['type'] = 0;
+				$words[] = $word;
+			}
+			//TODO use array map
+		} else {
+
+			// Inluce day word if there is none
+			$dw = WordCard::find($daywordID)->toArray();
+			$dw['type'] = 0;
+			$words[0] = $dw;
+		}
+
+		/* Subscriptions */
+		foreach ($user->subscriptions as $subscription)
+			$subs[] = $subscription->id;
+
+			$catwords = SentWordCard::whereIn('category_id', $subs)->get();
+
+			foreach ($catwords as $catword) {
+				$catIDs[] = $catword->id;
+			}
+
+			$tempCatWords = WordCard::whereIn('id', $catIDs)->get()->toArray();
+
+			foreach ($tempCatWords as $catword) {
+				$catword['type'] = 1;
+				array_push($words, $catword);
+			}
 
 		$result['words'] = $words;
+
 		$result['id_dayword'] = $daywordID;
 
 		return $result;
