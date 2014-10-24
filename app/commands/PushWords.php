@@ -91,7 +91,6 @@ class PushWords extends Command {
                 continue;
 
             $this->info("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
-
             if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) {
 
                 if ($wordsCount == SentWordCard::where('category_id', $id)->count()) {
@@ -134,7 +133,7 @@ class PushWords extends Command {
             return $ret;
         }
 
-        $users = User::where('device', '<>', '')->get();
+        $users = User::where('device', '<>', '')->with('subscriptions')->get();
 
         foreach ($users as $user) {
             if ($user->subscriptions()->count() > 0)

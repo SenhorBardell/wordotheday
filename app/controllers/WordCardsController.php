@@ -93,18 +93,20 @@ class WordCardsController extends ApiController {
 		foreach ($user->subscriptions as $subscription)
 			$subs[] = $subscription->id;
 
-			$catwords = SentWordCard::whereIn('category_id', $subs)->get();
+		if (isset($subs)) {
+			$catwords = SentWordCard::whereIn('category_id', $subs)->where('id', '>', $lastWord->id)->get();
 
 			foreach ($catwords as $catword) {
-				$catIDs[] = $catword->id;
+				$subCatIDs[] = $catword->word_id;
 			}
 
-			$tempCatWords = WordCard::whereIn('id', $catIDs)->get()->toArray();
+			$tempCatWords = WordCard::whereIn('id', $subCatIDs)->get()->toArray();
 
 			foreach ($tempCatWords as $catword) {
 				$catword['type'] = 1;
 				array_push($words, $catword);
 			}
+		}
 
 		$result['words'] = $words;
 
