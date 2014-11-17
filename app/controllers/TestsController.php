@@ -33,7 +33,7 @@ class TestsController extends ApiController {
 				$user->balance = $user->balance - $s->general_cost;
 
 //			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
-			$words = $this->getCards();
+			$words = WordCard::getRandomCards(20);
 
 		} else {
 
@@ -46,7 +46,7 @@ class TestsController extends ApiController {
 			return $this->respondInsufficientPrivileges('Not enough money');
 
 //			$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
-			$words = $this->getCards($category);
+			$words = WordCard::getRandomCards(20, $category);
 
 			if (Input::get('page') == '0' && count($words) < 5)
 				$user->balance = $user->balance - $category->test_price;
@@ -114,25 +114,6 @@ class TestsController extends ApiController {
 			'id' => $wordcard['id'],
 			'category_id' => $wordcard['category_id']
 		];
-	}
-
-	private function getCards($category = null, $take = 20) {
-		$count = WordCard::count();
-		$result = [];
-
-		if ($category) {
-			$cards = $category->wordcards;
-			$count = count($cards);
-		} else {
-			$cards = WordCard::all();
-			$count = count($cards);
-		}
-		while (count($result) < $take) {
-			$index = mt_rand(0, $count);
-			$result[] = &$cards[mt_rand(0, $index)];
-		}
-
-		return $result;
 	}
 
 }
