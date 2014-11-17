@@ -22,16 +22,22 @@ class WordCard extends \Eloquent {
 			$cards = WordCard::all();
 			$count = WordCard::count();
 		}
-		$religion = false;
 		while (count($result) < $take) {
-			$index = mt_rand(0, $count);
-			try {
-				$result[] = & $cards[$index];
-			} catch (exception $e) {
-				dd(exception);
-			}
-		}
 
+			$index = rand(0, $count);
+			try {
+				$card = $cards[$index];
+			} catch (Exception $e) {
+
+			}
+
+			if ($card)
+				if (!array_filter($result, function ($oldCard) use ($card) {
+					return $oldCard == $card;
+				})
+				)
+					array_push($result, $card->toArray());
+		}
 		return $result;
 	}
 }
