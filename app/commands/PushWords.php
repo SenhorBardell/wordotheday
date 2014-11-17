@@ -78,7 +78,7 @@ class PushWords extends Command {
     public function getSentWords($id, $words) {
         $pushWords = [];
         $state = 1;
-        while ($state <= 3) {
+        while ($state <= 1) {
 
             $wordsCount = $words->count();
 
@@ -140,13 +140,7 @@ class PushWords extends Command {
                 $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
         }
 
-//        foreach ($words as $word) {
-//            $wordcard = WordCard::find($word['word_id']);
-//            $resultWords[] = $word['word_id'];
-//        }
-
         $devices = PushNotification::DeviceCollection($rawdevices);
-// @TODO Proper push message body
         PushNotification::app('IOS')
             ->to($devices)
             ->send("Пора знакомится с новыми словами", [
