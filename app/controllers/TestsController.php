@@ -49,9 +49,14 @@ class TestsController extends ApiController {
 			if ($balance < $category->test_price)
 				return $this->respondInsufficientPrivileges('Not enough money');
 
-//			$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
 			$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
 			$words = WordCard::getRandomCards($testWords, 20, $category);
+
+			if (count($words) == 0) {
+				DB::table('test_word_cards')->where('category_id', Input::has('category') ? $category->id : 0)->where('user_id', $user->id)->delete();
+				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+				$words = WordCard::getRandomCards($testWords, 20, $category);
+			}
 
 			foreach ($words as $word) {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
@@ -62,8 +67,6 @@ class TestsController extends ApiController {
 		}
 		if (isset($wordsToModel)) {
 			$user->testWords()->attach($wordsToModel);
-		} else {
-			DB::table('test_word_cards')->where('category_id', Input::has('category') ? $category->id : 0)->where('user_id', $user->id)->delete();
 		}
 
 		$user->save();
