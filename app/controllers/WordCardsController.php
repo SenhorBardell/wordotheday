@@ -51,7 +51,6 @@ class WordCardsController extends ApiController {
 			return $ordered;
 		}
 
-		$lastWord = SentWordCard::where('word_id', $lastWordID)->orderBy('id', 'DESC')->first();
 		$daywordID = Setting::first()->word_id;
 
 		if ($lastWordID == '-1') {
@@ -60,6 +59,8 @@ class WordCardsController extends ApiController {
 			$dayWords = SentWordCard::where('category_id', 0)->take(20)->get();
 
 		} else {
+
+			$lastWord = SentWordCard::where('word_id', $lastWordID)->orderBy('id', 'DESC')->first();
 
 			/* usual case */
 			$dayWords = SentWordCard::where('category_id', '0')->where('id', '>', $lastWord->id)->orderBy('id', 'DESC')->take(20)->get();
@@ -94,7 +95,10 @@ class WordCardsController extends ApiController {
 			$subs[] = $subscription->id;
 
 		if (isset($subs)) {
-			$catwords = SentWordCard::whereIn('category_id', $subs)->where('id', '>', $lastWord->id)->get();
+			if (isset($lastWord))
+				$catwords = SentWordCard::whereIn('category_id', $subs)->where('id', '>', $lastWord->id)->get();
+			else
+				$catwords = SentWordCard::whereIn('category_id', $subs)->get();
 
 			foreach ($catwords as $catword) {
 				$subCatIDs[] = $catword->word_id;
