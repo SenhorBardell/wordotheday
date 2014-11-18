@@ -49,7 +49,41 @@ class UsersController extends ApiController {
         if (!$user)
             return $this->respondNotFound('User not found');
 
-        return $user;
+        if (!Input::has('hash'))
+            return $this->respondInsufficientPrivileges('No hash');
+
+        $categories = base64_decode(Input::get('hash'));
+
+        $categories = json_decode($categories);
+
+        $subscriptions = $user->subscriptions;
+
+        $categories = array_filter($categories, function($category){
+            return $category > 0;
+        });
+
+        foreach ($categories as $category) {
+            foreach ($subscriptions as $subscription) {
+                if ($subscription->id == $category) {
+                    $ex[] = $category;
+                }
+            }
+        }
+
+        $cats = array_diff($categories, $ex);
+
+//        $existingCategories = array_filter($categories, function($category) use($subscriptions) {
+//           return $subscriptions->filter(function($subscription) use($category) {
+//               if ($subscription->id == $category) return $category;
+//           });
+//        });
+//T.T
+//        dd($existingCategories);
+
+        if ($cats)
+			$user->subscriptions()->attach($cats);
+
+        return $this->respondNoContent();
     }
 
     /**
