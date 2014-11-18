@@ -7,8 +7,7 @@ class TestsController extends ApiController {
 	 *
 	 * @return Response
 	 */
-	public function index()
-	{
+	public function index() {
 		$tests = Test::all();
 		return $this->respond($this->transformCollection($tests));
 	}
@@ -33,7 +32,12 @@ class TestsController extends ApiController {
 				$user->balance = $user->balance - $s->general_cost;
 
 //			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
-			$words = WordCard::getRandomCards(20);
+			$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
+			$words = WordCard::getRandomCards($testWords, 20);
+
+			foreach ($words as $word) {
+				$wordsToModel[$word['id']] = ['category_id' => 0];
+			}
 
 		} else {
 
@@ -43,13 +47,23 @@ class TestsController extends ApiController {
 				return $this->respondNotFound('Category not found');
 
 			if ($balance < $category->test_price)
-			return $this->respondInsufficientPrivileges('Not enough money');
+				return $this->respondInsufficientPrivileges('Not enough money');
 
 //			$words = $category->wordcards()->take(20)->skip($offset * 20)->get()->toArray();
-			$words = WordCard::getRandomCards(20, $category);
+			$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+			$words = WordCard::getRandomCards($testWords, 20, $category);
+
+			foreach ($words as $word) {
+				$wordsToModel[$word['id']] = ['category_id' => $category->id];
+			}
 
 			if (Input::get('page') == '0' && count($words) < 5)
 				$user->balance = $user->balance - $category->test_price;
+		}
+		if (isset($wordsToModel)) {
+			$user->testWords()->attach($wordsToModel);
+		} else {
+			DB::table('test_word_cards')->where('category_id', Input::has('category') ? $category->id : 0)->where('user_id', $user->id)->delete();
 		}
 
 		$user->save();
@@ -63,10 +77,10 @@ class TestsController extends ApiController {
 		return $this->respond($response);
 	}
 
-	public function result($id) {mysql://b4ccce6110afe6:35364b49@eu-cdbr-west-01.cleardb.com/heroku_928cffd4c5b526d?reconnect=true
-
+	public function result($id) {
 		$user = User::wherePassword(Input::get('auth'))->whereId($id)->first();
 		$user->balance = $user->balance + Input::get('coins');
+
 		if ($user->save())
 			return $this->respond([
 				'id' => $user->id,
@@ -82,8 +96,7 @@ class TestsController extends ApiController {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function show($id)
-	{
+	public function show($id) {
 		$test = Test::find($id);
 		$cats = $test->category;
 

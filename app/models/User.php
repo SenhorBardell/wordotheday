@@ -8,6 +8,10 @@ class User extends \Eloquent {
         return $this->belongsToMany('Category', 'subscriptions', 'user_id', 'category_id')->withTimestamps();
 	}
 
+	public function testWords() {
+		return $this->belongsToMany('WordCard', 'test_word_cards', 'user_id', 'word_id')->withPivot('category_id');
+	}
+
 	public function devices() {
 		return $this->hasMany('Device');
 	}
