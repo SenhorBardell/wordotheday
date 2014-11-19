@@ -100,6 +100,12 @@ class WordCardsController extends ApiController {
 			else
 				$catwords = SentWordCard::whereIn('category_id', $subs)->get();
 
+			if ($catwords->isEmpty())
+				return [
+					'words' => [],
+					'id_dayword' => $daywordID
+				];
+
 			foreach ($catwords as $catword) {
 				$subCatIDs[] = $catword->word_id;
 			}
