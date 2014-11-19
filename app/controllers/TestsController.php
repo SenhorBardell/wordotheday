@@ -35,11 +35,11 @@ class TestsController extends ApiController {
 			$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
 			$words = WordCard::getRandomCards($testWords, 20);
 
-			if (count($words) == 0) {
-				DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->delete();
-				$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
-				$words = WordCard::getRandomCards($testWords, 20);
-			}
+			//if (count($words) == 0) {
+			//	DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->delete();
+			//	$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
+			//	$words = WordCard::getRandomCards($testWords, 20);
+			//}
 
 			foreach ($words as $word) {
 				$wordsToModel[$word['id']] = ['category_id' => 0];
@@ -58,11 +58,11 @@ class TestsController extends ApiController {
 			$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
 			$words = WordCard::getRandomCards($testWords, 20, $category);
 
-			if (count($words) == 0) {
-				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
-				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
-				$words = WordCard::getRandomCards($testWords, 20, $category);
-			}
+			//if (count($words) == 0) {
+			//	DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
+			//	$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+			//	$words = WordCard::getRandomCards($testWords, 20, $category);
+			//}
 
 			foreach ($words as $word) {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
