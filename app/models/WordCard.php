@@ -33,7 +33,7 @@ class WordCard extends \Eloquent {
 
 		while (count($result) < $take) {
 
-			if ($countdown != 0) $countdown--; else return $result;
+//			if ($countdown != 0) $countdown--; else return $result;
 
 			if ($cards->count() == 0) return $result;
 
@@ -47,14 +47,14 @@ class WordCard extends \Eloquent {
 			if (isset($card)) {
 
 				$sentCardsExists = array_filter($sentCards, function($sentCard) use($card) {
-					return $sentCard->id = $card->id;
+					return $sentCard->id == $card->id;
 				});
 
 				$resultCardsExists = array_filter($result, function ($oldCard) use ($card) {
 					return $oldCard['id'] == $card->id;
 				});
 
-				if (!$sentCardsExists && count($resultCardsExists) == 0) {
+				if (count($sentCardsExists) == 0 && count($resultCardsExists) == 0) {
 					array_push($result, $card->toArray());
 				}
 			}
