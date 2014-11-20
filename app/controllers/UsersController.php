@@ -67,7 +67,7 @@ class UsersController extends ApiController {
         if ($categoriesToStore)
 			$user->subscriptions()->attach($categoriesToStore);
 
-        return $this->respondNoContent();
+        return $this->respond(['balance' => $user->balance]);
     }
 
     /**
