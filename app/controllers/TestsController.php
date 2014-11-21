@@ -56,13 +56,23 @@ class TestsController extends ApiController {
 				return $this->respondInsufficientPrivileges('Not enough money');
 
 			$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
-			$words = WordCard::getRandomCards($testWords, 20, $category);
 
-			//if (count($words) == 0) {
-			//	DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
-			//	$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
-			//	$words = WordCard::getRandomCards($testWords, 20, $category);
-			//}
+			$transformedTestWords = array_map(function($testWord) {
+				return [
+					'id' => $testWord->id,
+					'user_id' => $testWord->user_id,
+					'word_id' => $testWord->word_id,
+					'category_id' => $testWord->category_id
+				];
+			}, $testWords);
+
+			$words = WordCard::getRandomCards($transformedTestWords, 20, $category);
+
+			if (count($words) == 0) {
+				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
+//				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+//				$words = WordCard::getRandomCards($testWords, 20, $category);
+			}
 
 			foreach ($words as $word) {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
