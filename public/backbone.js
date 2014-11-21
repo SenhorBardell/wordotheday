@@ -227,20 +227,31 @@ return __p
 
 this["window"]["App"]["JST"]["moderation/single"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<td class="id">' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '</td>\n<td>' +
-((__t = ( word )) == null ? '' : __t) +
+((__t = ( card.word )) == null ? '' : __t) +
 '</td>\n<td>' +
-((__t = ( answer )) == null ? '' : __t) +
-'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit1"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.answer )) == null ? '' : __t) +
+'</td>\n<td class="categories-dropdown">\n    <select id="category_id">\n        ';
+ _.each(categories, function(category) { ;
+__p += '\n            <option ' +
+((__t = ( category.id == card.category_id ? 'selected' : '' )) == null ? '' : __t) +
+' value="' +
+((__t = ( category.id )) == null ? '' : __t) +
+'">' +
+((__t = ( category.name )) == null ? '' : __t) +
+'</option>\n        ';
+ }); ;
+__p += '\n    </select>\n</td>\n<td class="edit1"><a href="/api/moderate/' +
+((__t = ( card.id )) == null ? '' : __t) +
 '/edit" class="edit"><img src="/img/edit.png"></a></td>\n<td class="accept"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '/accept" class="accept"><img src="/img/ok.png"></a></td>\n<td class="delete"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '/decline" class="reject"><img src="/img/delete.png"></a></td>';
 
 }
@@ -716,7 +727,7 @@ App.Views.Categories = Backbone.View.extend({
 
 	initialize: function() {
 		this.collection.on('add', this.addOne, this);
-		this.collection.comparator = function(category) {
+		this.collection.comparator = function() {
 			return -1;
 		}
 	},
@@ -748,23 +759,24 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 	template: _.template([
 		"<select id='category_id'>",
 			"<% categories.each(function(category) { %>",
-				"<%= categoryTemplate(category) %>",
+				"<%= categoryTemplate(category, cards) %>",
 			"<% }); %>",
 		"</select>"
 	].join(',')),
 
 	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
 
-	categoryTemplate: function(category) {
-		if (category.get('id') == 211)
+	categoryTemplate: function(category, cards) {
+		//if (category.get('id') == 211)
 			return '<option selected value=' + category.get('id') + '>' + category.get('name') + '</option>';
-		else
-			return '<option value=' + category.get('id') + '>' + category.get('name') + '</option>';
+		//else
+		//	return '<option value=' + category.get('id') + '>' + category.get('name') + '</option>';
 	},
 
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
 		this.collection.on('add', this.addOne, this);
-		this.collection.comparator = function(category) {
+		this.collection.comparator = function() {
 			return -1;
 		}
 	},
@@ -773,13 +785,14 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 
 		var html = this.template({
 			categories: this.collection,
-			categoryTemplate: this.categoryTemplate
+			categoryTemplate: this.categoryTemplate,
+			cards: this.options.cards
 		});
 
 		this.$el.append(html);
 
 		return this;
-	},
+	}
 
 });
 
@@ -803,7 +816,7 @@ App.Views.Category = Backbone.View.extend({
 	},
 
 	deleteCategory: function() {
-		ok = confirm('Вы действительно хотите удалить выбранную категорию?');
+		var ok = confirm('Вы действительно хотите удалить выбранную категорию?');
 		if (ok == true) this.model.destroy();
 	},
 
@@ -912,8 +925,9 @@ App.Views.EditCategory = Backbone.View.extend({
 });
 App.Views.ModerationApp = Backbone.View.extend({
 
-	initialize: function() {
-		var AllModerationWordsView = new App.Views.ModerationWords({ collection: App.moderation }).render();
+	initialize: function(options) {
+		this.options = options;
+		var AllModerationWordsView = new App.Views.ModerationWords({ collection: App.moderation, categories: this.options.categories }).render();
 	
 		$('.content').empty().append(window.App.JST['moderation/layout']);
 		AllModerationWordsView.$el.insertAfter('.content thead');
@@ -932,12 +946,13 @@ App.Views.ModerationApp = Backbone.View.extend({
 		vent.off('card:edit', this.editCard, this);
 	}
 
-})
+});
 
 App.Views.ModerationWords = Backbone.View.extend({
 	tagName: 'tbody',
 
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
 		this.collection.on('add', this.addOne, this);
 		this.collection.comparator = function(word) {
 			return -1;
@@ -950,7 +965,7 @@ App.Views.ModerationWords = Backbone.View.extend({
 	},
 
 	addOne: function(word) {
-		var moderatedWordsView = new App.Views.ModerationWord({ model: word });
+		var moderatedWordsView = new App.Views.ModerationWord({ model: word, categories: this.options.categories });
 		this.$el.prepend(moderatedWordsView.render().el);
 	},
 
@@ -965,6 +980,7 @@ App.Views.ModerationWord = Backbone.View.extend({
 	template: window.App.JST['moderation/single'],
 
 	initialize: function(options) {
+		this.options = options;
 		this.model.on('destroy', this.unrender, this);
 		this.model.on('change', this.render, this);
 	},
@@ -976,10 +992,10 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	accept: function(e) {
-		id = this.model.get('id');
-		category = $(e.target).parent().parent().parent().find('#category_id').val()
+		var id = this.model.get('id');
+		var category = $(e.target).parent().parent().parent().find('#category_id').val();
 
-		that = this
+		var that = this
 		$.ajax({
 			type: 'POST',
 			url: '/api/moderate/words/'+ id + '/changestatus',
@@ -1001,7 +1017,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	render: function() {
-		this.$el.html(this.template(this.model.toJSON()));
+		//console.log(this.options.categories.toJSON());
+		this.$el.html(this.template({ card: this.model.toJSON(), categories: this.options.categories.toJSON()}));
 		return this;
 	},
 
@@ -1326,10 +1343,10 @@ App.Router = Backbone.Router.extend({
 			App.categories = new App.Collections.Categories;
 
 			App.moderation.fetch().then(function() {
-				App.current = new App.Views.ModerationApp({ collection: App.moderation });
 				App.categories.fetch().then(function() {
-					AllCategoriesViewDropdown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
-					$('.categories-dropdown').html(AllCategoriesViewDropdown.el);
+					App.current = new App.Views.ModerationApp({ collection: App.moderation, categories: App.categories });
+					//AllCategoriesViewDropdown = new App.Views.CategoriesDropdown({ collection: App.categories, cards: App.moderation }).render();
+					//$('.categories-dropdown').html(AllCategoriesViewDropdown.el);
 				});
 			});
 		} else {

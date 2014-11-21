@@ -1,7 +1,13 @@
-<td class="id"><%= id %></td>
-<td><%= word %></td>
-<td><%= answer %></td>
-<td class="categories-dropdown">In: Category</td>
-<td class="edit1"><a href="/api/moderate/<%= id %>/edit" class="edit"><img src="/img/edit.png"></a></td>
-<td class="accept"><a href="/api/moderate/<%= id %>/accept" class="accept"><img src="/img/ok.png"></a></td>
-<td class="delete"><a href="/api/moderate/<%= id %>/decline" class="reject"><img src="/img/delete.png"></a></td>
+<td class="id"><%= card.id %></td>
+<td><%= card.word %></td>
+<td><%= card.answer %></td>
+<td class="categories-dropdown">
+    <select id="category_id">
+        <% _.each(categories, function(category) { %>
+            <option <%= category.id == card.category_id ? 'selected' : '' %> value="<%= category.id %>"><%= category.name %></option>
+        <% }); %>
+    </select>
+</td>
+<td class="edit1"><a href="/api/moderate/<%= card.id %>/edit" class="edit"><img src="/img/edit.png"></a></td>
+<td class="accept"><a href="/api/moderate/<%= card.id %>/accept" class="accept"><img src="/img/ok.png"></a></td>
+<td class="delete"><a href="/api/moderate/<%= card.id %>/decline" class="reject"><img src="/img/delete.png"></a></td>

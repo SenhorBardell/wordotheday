@@ -204,20 +204,31 @@ return __p
 
 this["window"]["App"]["JST"]["moderation/single"] = function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
 __p += '<td class="id">' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '</td>\n<td>' +
-((__t = ( word )) == null ? '' : __t) +
+((__t = ( card.word )) == null ? '' : __t) +
 '</td>\n<td>' +
-((__t = ( answer )) == null ? '' : __t) +
-'</td>\n<td class="categories-dropdown">In: Category</td>\n<td class="edit1"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.answer )) == null ? '' : __t) +
+'</td>\n<td class="categories-dropdown">\n    <select id="category_id">\n        ';
+ _.each(categories, function(category) { ;
+__p += '\n            <option ' +
+((__t = ( category.id == card.category_id ? 'selected' : '' )) == null ? '' : __t) +
+' value="' +
+((__t = ( category.id )) == null ? '' : __t) +
+'">' +
+((__t = ( category.name )) == null ? '' : __t) +
+'</option>\n        ';
+ }); ;
+__p += '\n    </select>\n</td>\n<td class="edit1"><a href="/api/moderate/' +
+((__t = ( card.id )) == null ? '' : __t) +
 '/edit" class="edit"><img src="/img/edit.png"></a></td>\n<td class="accept"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '/accept" class="accept"><img src="/img/ok.png"></a></td>\n<td class="delete"><a href="/api/moderate/' +
-((__t = ( id )) == null ? '' : __t) +
+((__t = ( card.id )) == null ? '' : __t) +
 '/decline" class="reject"><img src="/img/delete.png"></a></td>';
 
 }

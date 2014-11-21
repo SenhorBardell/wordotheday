@@ -26,7 +26,7 @@ App.Views.Categories = Backbone.View.extend({
 
 	initialize: function() {
 		this.collection.on('add', this.addOne, this);
-		this.collection.comparator = function(category) {
+		this.collection.comparator = function() {
 			return -1;
 		}
 	},
@@ -58,23 +58,24 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 	template: _.template([
 		"<select id='category_id'>",
 			"<% categories.each(function(category) { %>",
-				"<%= categoryTemplate(category) %>",
+				"<%= categoryTemplate(category, cards) %>",
 			"<% }); %>",
 		"</select>"
 	].join(',')),
 
 	// categoryTemplate: _.template('<option id="<%= id %>"><%= name %></option>'),
 
-	categoryTemplate: function(category) {
-		if (category.get('id') == 211)
+	categoryTemplate: function(category, cards) {
+		//if (category.get('id') == 211)
 			return '<option selected value=' + category.get('id') + '>' + category.get('name') + '</option>';
-		else
-			return '<option value=' + category.get('id') + '>' + category.get('name') + '</option>';
+		//else
+		//	return '<option value=' + category.get('id') + '>' + category.get('name') + '</option>';
 	},
 
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
 		this.collection.on('add', this.addOne, this);
-		this.collection.comparator = function(category) {
+		this.collection.comparator = function() {
 			return -1;
 		}
 	},
@@ -83,13 +84,14 @@ App.Views.CategoriesDropdown = Backbone.View.extend({
 
 		var html = this.template({
 			categories: this.collection,
-			categoryTemplate: this.categoryTemplate
+			categoryTemplate: this.categoryTemplate,
+			cards: this.options.cards
 		});
 
 		this.$el.append(html);
 
 		return this;
-	},
+	}
 
 });
 
@@ -113,7 +115,7 @@ App.Views.Category = Backbone.View.extend({
 	},
 
 	deleteCategory: function() {
-		ok = confirm('Вы действительно хотите удалить выбранную категорию?');
+		var ok = confirm('Вы действительно хотите удалить выбранную категорию?');
 		if (ok == true) this.model.destroy();
 	},
 

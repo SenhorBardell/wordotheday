@@ -116,10 +116,10 @@ App.Router = Backbone.Router.extend({
 			App.categories = new App.Collections.Categories;
 
 			App.moderation.fetch().then(function() {
-				App.current = new App.Views.ModerationApp({ collection: App.moderation });
 				App.categories.fetch().then(function() {
-					AllCategoriesViewDropdown = new App.Views.CategoriesDropdown({ collection: App.categories }).render();
-					$('.categories-dropdown').html(AllCategoriesViewDropdown.el);
+					App.current = new App.Views.ModerationApp({ collection: App.moderation, categories: App.categories });
+					//AllCategoriesViewDropdown = new App.Views.CategoriesDropdown({ collection: App.categories, cards: App.moderation }).render();
+					//$('.categories-dropdown').html(AllCategoriesViewDropdown.el);
 				});
 			});
 		} else {

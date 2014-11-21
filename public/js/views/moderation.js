@@ -1,7 +1,8 @@
 App.Views.ModerationApp = Backbone.View.extend({
 
-	initialize: function() {
-		var AllModerationWordsView = new App.Views.ModerationWords({ collection: App.moderation }).render();
+	initialize: function(options) {
+		this.options = options;
+		var AllModerationWordsView = new App.Views.ModerationWords({ collection: App.moderation, categories: this.options.categories }).render();
 	
 		$('.content').empty().append(window.App.JST['moderation/layout']);
 		AllModerationWordsView.$el.insertAfter('.content thead');
@@ -20,12 +21,13 @@ App.Views.ModerationApp = Backbone.View.extend({
 		vent.off('card:edit', this.editCard, this);
 	}
 
-})
+});
 
 App.Views.ModerationWords = Backbone.View.extend({
 	tagName: 'tbody',
 
-	initialize: function() {
+	initialize: function(options) {
+		this.options = options;
 		this.collection.on('add', this.addOne, this);
 		this.collection.comparator = function(word) {
 			return -1;
@@ -38,7 +40,7 @@ App.Views.ModerationWords = Backbone.View.extend({
 	},
 
 	addOne: function(word) {
-		var moderatedWordsView = new App.Views.ModerationWord({ model: word });
+		var moderatedWordsView = new App.Views.ModerationWord({ model: word, categories: this.options.categories });
 		this.$el.prepend(moderatedWordsView.render().el);
 	},
 
@@ -53,6 +55,7 @@ App.Views.ModerationWord = Backbone.View.extend({
 	template: window.App.JST['moderation/single'],
 
 	initialize: function(options) {
+		this.options = options;
 		this.model.on('destroy', this.unrender, this);
 		this.model.on('change', this.render, this);
 	},
@@ -64,10 +67,10 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	accept: function(e) {
-		id = this.model.get('id');
-		category = $(e.target).parent().parent().parent().find('#category_id').val()
+		var id = this.model.get('id');
+		var category = $(e.target).parent().parent().parent().find('#category_id').val();
 
-		that = this
+		var that = this
 		$.ajax({
 			type: 'POST',
 			url: '/api/moderate/words/'+ id + '/changestatus',
@@ -89,7 +92,8 @@ App.Views.ModerationWord = Backbone.View.extend({
 	},
 
 	render: function() {
-		this.$el.html(this.template(this.model.toJSON()));
+		//console.log(this.options.categories.toJSON());
+		this.$el.html(this.template({ card: this.model.toJSON(), categories: this.options.categories.toJSON()}));
 		return this;
 	},
 
