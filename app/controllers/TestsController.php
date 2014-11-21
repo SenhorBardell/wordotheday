@@ -78,7 +78,7 @@ class TestsController extends ApiController {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
 			}
 
-			if (Input::get('page') == 0)
+			if (Input::get('page') == 0 && count($words) > 5)
 				$user->balance = $user->balance - $category->test_price;
 		}
 
