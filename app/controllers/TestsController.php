@@ -33,7 +33,17 @@ class TestsController extends ApiController {
 
 //			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
 			$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
-			$words = WordCard::getRandomCards($testWords, 20);
+
+			$transformedTestWords = array_map(function($testWord) {
+				return [
+					'id' => $testWord->id,
+					'user_id' => $testWord->user_id,
+					'word_id' => $testWord->word_id,
+					'category_id' => $testWord->category_id
+				];
+			}, $testWords);
+
+			$words = WordCard::getRandomCards($transformedTestWords, 20);
 
 			//if (count($words) == 0) {
 			//	DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->delete();
