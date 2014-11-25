@@ -3,7 +3,7 @@
 return array(
 
     'IOS'     => array(
-        'environment' =>'development',
+        'environment' => $_ENV['APNS_ENV'],
         'certificate' => $_ENV['APNS_CERTIFICATE'],
         'passPhrase'  => $_ENV['APNS_PASSPHRASE'],
         'service'     =>'apns'
