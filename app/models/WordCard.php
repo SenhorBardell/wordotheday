@@ -34,10 +34,10 @@ class WordCard extends \Eloquent {
 
 		while (count($result) < $take) {
 
-			if ($countdown != 0) $countdown--; else {
+//			if ($countdown != 0) $countdown--; else {
 //				var_dump('===========COUNTDOWN REACHED==========');
-				return $result;
-			}
+//				return $result;
+//			}
 
 			if (empty($cards)) {
 //				var_dump('Cards is empty');
