@@ -30,34 +30,29 @@ class WordCard extends \Eloquent {
 		}
 
 		$countdown = $count;
-		$countdown = 50;
+		$countdown = 500;
 
 		while (count($result) < $take) {
 
-//			if ($countdown != 0) $countdown--; else {
-//				var_dump('===========COUNTDOWN REACHED==========');
-//				return $result;
-//			}
-
-			if (empty($cards)) {
-//				var_dump('Cards is empty');
+			if ($countdown != 0) $countdown--; else {
 				return $result;
 			}
 
-			if (count($cards) <= 1) {
+			if (empty($cards)) {
+				return $result;
+			}
+
+			if (count($cards) < 2) {
 				$card = array_shift($cards);
-//				var_dump('Grabbing last card');
 			} else {
-				$index = mt_rand(0, $count);
-//				var_dump('Trying to get card from index: ' . $index);
+				$index = rand(0, $count);
 			}
 
 			if (array_key_exists($index, $cards)) {
 				$card = $cards[$index];
-//				var_dump('Card exist: '.$index.' id: '.$card['id']);
 				unset($cards[$index]);
-				$count = count($cards);
-//				var_dump('Current count: '.$count);
+			} else {
+				$card = array_shift($cards);
 			}
 
 			if (isset($card)) {
@@ -70,18 +65,10 @@ class WordCard extends \Eloquent {
 					return $oldCard['id'] == $card['id'];
 				});
 
-//				var_dump('Dublicate from sent - '.count($sentCardsExists));
-
-//				var_dump($sentCardsExists);
-
-//				var_dump('Dublicate from existing - '.count($resultCardsExists));
-
-//				var_dump($resultCardsExists);
-
 				if (count($sentCardsExists) == 0 && count($resultCardsExists) == 0) {
-//					var_dump('Pushing');
 					array_push($result, $card);
 				}
+//				var_dump(count($cards));
 //				var_dump('=============');
 			}
 		}
