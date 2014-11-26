@@ -34,15 +34,15 @@ class WordCard extends \Eloquent {
 
 		while (count($result) < $take) {
 
-			if ($countdown != 0) $countdown--; else {
-				return $result;
-			}
+//			if ($countdown != 0) $countdown--; else {
+//				return $result;
+//			}
 
 			if (empty($cards)) {
 				return $result;
 			}
 
-			if (count($cards) < 2) {
+			if (count($cards) < 1) {
 				$card = array_shift($cards);
 			} else {
 				$index = rand(0, $count);
