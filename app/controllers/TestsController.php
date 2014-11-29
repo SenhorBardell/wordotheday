@@ -28,7 +28,7 @@ class TestsController extends ApiController {
 			if ($balance < $s->general_cost)
 				return $this->respondInsufficientPrivileges('Not enough money');
 
-			if (Input::get('page') == '0')
+			if (Input::get('page') == '0' && !Input::has('page'))
 				$user->balance = $user->balance - $s->general_cost;
 
 //			$words = WordCard::take(20)->skip($offset * 20)->get()->toArray();
@@ -88,7 +88,7 @@ class TestsController extends ApiController {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
 			}
 
-			if (Input::get('page') == 0 && count($words) > 5)
+			if (Input::get('page') == 0 && count($words) > 5 && !Input::has('page'))
 				$user->balance = $user->balance - $category->test_price;
 		}
 
@@ -110,6 +110,11 @@ class TestsController extends ApiController {
 	public function result($id) {
 		$user = User::wherePassword(Input::get('auth'))->whereId($id)->first();
 		$user->balance = $user->balance + Input::get('coins');
+
+		if (Input::has('category')) {
+			$category = Input::get('category');
+			DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
+		}
 
 		if ($user->save())
 			return $this->respond([
