@@ -78,17 +78,20 @@ class TestsController extends ApiController {
 
 			$words = WordCard::getRandomCards($transformedTestWords, 20, $category);
 
-			if (count($words) == 0) {
+			if (count($words) == 0 && $offset == 0) {
 				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
-//				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
+				//TODO complete array to 20
 //				$words = WordCard::getRandomCards($testWords, 20, $category);
+			} elseif (count($words) == 0) {
+				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
 			}
 
 			foreach ($words as $word) {
 				$wordsToModel[$word['id']] = ['category_id' => $category->id];
 			}
 
-			if (Input::get('page') == 0 && count($words) > 5 && !Input::has('page'))
+			if ($offset == 0 && count($words) > 5)
 				$user->balance = $user->balance - $category->test_price;
 		}
 
@@ -113,7 +116,7 @@ class TestsController extends ApiController {
 
 		if (Input::has('category')) {
 			$category = Input::get('category');
-			DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
+			DB::table('test_word_cards')->where('category_id', $category)->where('user_id', $user->id)->delete();
 		}
 
 		if ($user->save())
@@ -121,8 +124,10 @@ class TestsController extends ApiController {
 				'id' => $user->id,
 				'balance' => $user->balance,
 				'max_result' => $user->max_result,
-				'overal_standing' => $user->overal_standing,
+				'overal_standing' => $user->overal_standing
 			]);
+
+		return $this->respondServerError();
 	}
 
 	/**
