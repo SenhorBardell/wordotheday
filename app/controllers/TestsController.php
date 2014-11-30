@@ -112,6 +112,10 @@ class TestsController extends ApiController {
 
 	public function result($id) {
 		$user = User::wherePassword(Input::get('auth'))->whereId($id)->first();
+
+		if (!$user)
+			return $this->respondNotFound('User not found');
+
 		$user->balance = $user->balance + Input::get('coins');
 
 		if (Input::has('category')) {
