@@ -47,8 +47,6 @@ class TestsController extends ApiController {
 
 			if (count($words) == 0) {
 				DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->delete();
-//				$testWords = DB::table('test_word_cards')->where('category_id', 0)->where('user_id', $user->id)->get();
-//				$words = WordCard::getRandomCards($testWords, 20);
 			}
 
 			foreach ($words as $word) {
@@ -62,8 +60,17 @@ class TestsController extends ApiController {
 			if (!$category)
 				return $this->respondNotFound('Category not found');
 
+			if ($category->wordcards->count() <= 20)
+				return $this->respond([
+					'status' => 'started',
+					'balance' => $user->balance,
+					'words' => []
+				]);
+
 			if ($balance < $category->test_price)
 				return $this->respondInsufficientPrivileges('Not enough money');
+
+			// Begin compiling cards
 
 			$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
 
@@ -78,12 +85,20 @@ class TestsController extends ApiController {
 
 			$words = WordCard::getRandomCards($transformedTestWords, 20, $category);
 
-			if (count($words) == 0 && $offset == 0) {
+			// We got less than 5
+
+			if (count($words) <= 5 && $offset == 0) {
+
+				// remove from history
 				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
-				$testWords = DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->get();
-				//TODO complete array to 20
-//				$words = WordCard::getRandomCards($testWords, 20, $category);
-			} elseif (count($words) == 0) {
+
+				$secondIterationWords = WordCard::getRandomCards([], 20 - count($words), $category);
+
+				$words = array_merge($words, $secondIterationWords);
+
+				$words = array_values($words);
+
+			} elseif (count($words) == 0 && $offset != 0) {
 				DB::table('test_word_cards')->where('category_id', $category->id)->where('user_id', $user->id)->delete();
 			}
 
@@ -104,6 +119,7 @@ class TestsController extends ApiController {
 		shuffle($words);
 
 		$response['status'] = 'started';
+		$response['count'] = count($words);
 		$response['balance'] = $user->balance;
 		$response['words'] = $this->transformWordsCollection($words);
 
