@@ -41,11 +41,10 @@ class PushWord extends Command {
 	{
         $dayWord = $this->getDayWord();
 
+        $this->updateSettings($dayWord['word_id']);
         $this->check();
 
         $this->pushWord($dayWord);
-
-        $this->updateSettings($dayWord['word_id']);
 	}
 
     /**
@@ -72,8 +71,8 @@ class PushWord extends Command {
         $feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
         $this->info('Size '.  count($feedback));
         foreach ($feedback as $device) {
-            var_dump($device);
-            $this->info($device);
+            User::where('device', $device['deviceToken'])->delete();
+            $this->info($device['deviceToken'] . ' is invalid');
         }
 	}
 
@@ -135,29 +134,54 @@ class PushWord extends Command {
         return $pushWords;
     }
 
+    public function send($device, $word) {
+        try {
+            PushNotification::app('IOS')
+                ->to($device)
+                ->send($word->word . " - новое слово для изучения", [
+                    "custom" => [
+                        "cdata" => [
+                            [
+                                "word_id" => $word->id,
+                                "cat_id" => $word->category_id,
+                            ]
+                        ],
+                        "type" => 0,
+                    ]
+                ]);
+            $this->comment('Sending to '.$device);
+        } catch (Exception $e) {
+            $this->error($e);
+        }
+    }
+
 	public function pushWord($word) {
         $word = WordCard::find($word['word_id']);
         $users = User::where('device', '<>', '')->get();
-		DB::table('users')->where('word_id', 0)->update(['word_id' => Setting::first()->word_id]);
+        DB::table('users')->where('word_id', 0)->update(['word_id' => Setting::first()->word_id]);
 
         foreach ($users as $user) {
-            $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
+            $this->send($user->device, $word);
         }
-        $devices = PushNotification::DeviceCollection($rawdevices);
 
-        PushNotification::app('IOS')
-            ->to($devices)
-            ->send($word->word." - новое слово для изучения", [
-                "custom" => [
-                    "cdata" => [
-                        [
-                        "word_id" => $word->id,
-                        "cat_id" => $word->category_id,
-                       ]
-                    ],
-                    "type" => 0,
-                ]
-            ]);
+//        foreach ($users as $user) {
+//            $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
+//        }
+//        $devices = PushNotification::DeviceCollection($rawdevices);
+//
+//        PushNotification::app('IOS')
+//            ->to($devices)
+//            ->send($word->word." - новое слово для изучения", [
+//                "custom" => [
+//                    "cdata" => [
+//                        [
+//                        "word_id" => $word->id,
+//                        "cat_id" => $word->category_id,
+//                       ]
+//                    ],
+//                    "type" => 0,
+//                ]
+//            ]);
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
 
