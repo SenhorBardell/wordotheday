@@ -71,7 +71,9 @@ class PushWord extends Command {
         $feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
         $this->info('Size '.  count($feedback));
         foreach ($feedback as $device) {
-            User::where('device', $device['deviceToken'])->delete();
+            $user = User::where('device', $device['deviceToken'])->first();
+            $user->device = '';
+            $user->save();
             $this->info($device['deviceToken'] . ' is invalid');
         }
 	}
