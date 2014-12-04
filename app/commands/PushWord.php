@@ -68,8 +68,11 @@ class PushWord extends Command {
 			'passPhrase'  => $_ENV['APNS_PASSPHRASE'],
 		]);
 
+        $this->info('Checking feedback');
         $feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
+        $this->info('Size '.  count($feedback));
         foreach ($feedback as $device) {
+            var_dump($device);
             $this->info($device);
         }
 	}
