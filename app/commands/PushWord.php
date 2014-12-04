@@ -41,10 +41,11 @@ class PushWord extends Command {
 	{
         $dayWord = $this->getDayWord();
 
+        $this->check();
+
         $this->pushWord($dayWord);
 
         $this->updateSettings($dayWord['word_id']);
-
 	}
 
     /**
@@ -60,15 +61,15 @@ class PushWord extends Command {
     }
 	
 	public function check() {
-		$pushManager = PushNotification::PushManager('Development');
+		$pushManager = PushNotification::PushManager('Production');
 
-		$apnsAdapter = PushNotification::ApnsAdapter([
+		$apnsAdapter = new ApnsAdapter([
 			'certificate' => $_ENV['APNS_CERTIFICATE'],
 			'passPhrase'  => $_ENV['APNS_PASSPHRASE'],
 		]);
 
-		$feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
-		var_dump($feedback);
+        $feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
+        $this->info(print_r($feedback));
 	}
 
     public function getDayWord() {

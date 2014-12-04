@@ -14,3 +14,5 @@
 Artisan::add(new PushWord);
 
 Artisan::add(new PushWords);
+
+Artisan::add(new reset);
