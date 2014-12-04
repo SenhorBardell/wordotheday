@@ -69,7 +69,9 @@ class PushWord extends Command {
 		]);
 
         $feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
-        $this->info(print_r($feedback));
+        foreach ($feedback as $device) {
+            $this->info($device);
+        }
 	}
 
     public function getDayWord() {
