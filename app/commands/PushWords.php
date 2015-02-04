@@ -139,7 +139,7 @@ class PushWords extends Command {
 			->groupBy('device')
 			->get()
 			->filter(function ($user) {
-				return $user->subscriptions()->count() > 0;
+				return $user->subscriptions->count() > 0;
 			})
 			->map(function ($user) {
 				return PushNotification::Device($user->device, ['badge', 1]);
@@ -153,6 +153,32 @@ class PushWords extends Command {
 					"type" => 1
 				]
 			]);
+	}
+
+	public function pushWords3($words) {
+		User::where('device', '<>', '')->with('subscriptions')->groupBy('device')->get()
+			->filter(function ($user) {
+				return $user->subscriptions->count() > 0;
+			})->each(function ($user) use($words){
+//				$this->info($user->device);
+				$this->send($user->device, $words);
+			});
+	}
+
+	public function send($device, $words) {
+		try {
+			PushNotification::app('IOS')
+				->to($device)
+				->send("Пора знакомится с новыми словами", [
+					"custom" => [
+						"cdata" => $words,
+						"type" => 1
+					]
+				]);
+			$this->comment('Sending to '.$device);
+		} catch (Exception $e) {
+			$this->error($e);
+		}
 	}
 
     /**
@@ -224,7 +250,7 @@ class PushWords extends Command {
         $users = User::where('device', '<>', '')->with('subscriptions')->get();
 
         $rawdevices = $users->filter(function ($user) {
-            return $user->subscriptions()->count() > 0;
+            return $user->subscriptions->count() > 0;
         })->map(function ($user) {
             return PushNotification::Device($user->device, ['badge' => 1]);
         });
