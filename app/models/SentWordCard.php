@@ -15,4 +15,8 @@ class SentWordCard extends \Eloquent {
     public function scopeLast($query, $id) {
         return $query->where('word_id', '>', $id)->orderBy('word_id');
     }
+
+	public function scopeByCat($query, $category) {
+		return $query->where('category_id', $category->id);
+	}
 }

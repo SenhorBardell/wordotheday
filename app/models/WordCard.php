@@ -12,6 +12,10 @@ class WordCard extends \Eloquent {
 		return $this->hasMany('User');
 	}
 
+	public function isSent() {
+		return SentWordCard::where('word_id', $this->id)->count() >= 1;
+	}
+
 //	private function filterCards($cards, $card) {
 //		return array_filter($cards, function($filterCard) use ($card) {
 //			return $filterCard == $card;

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Sly\NotificationPusher\PushManager,
@@ -37,7 +38,7 @@ class PushWords extends Command {
 	 *
 	 * @return mixed
 	 */
-	public function fire()
+	public function fire3()
 	{
         $categories = Category::all();
         $cardsArr = [];
@@ -56,28 +57,115 @@ class PushWords extends Command {
         }
 
         $this->pushWords($cardsArr);
+//        $this->pushWords([]);
 	}
 	
 	public function check() {
 		$pushManager = PushNotification::PushManager('Development');
 
-		$apnsAdapter = PushNotification::ApnsAdapter([
+		$apnsAdapter = new ApnsAdapter([
 			'certificate' => $_ENV['APNS_CERTIFICATE'],
 			'passPhrase'  => $_ENV['APNS_PASSPHRASE'],
 		]);
 
 		$feedback = $pushManager->getFeedback($apnsAdapter); // Returns an array of Token + DateTime couples
+
+		foreach ($feedback as $row) {
+			$user = User::where('device', $row['devtoken'])->first();
+			$user->device = '';
+			$user->save();
+		}
+
 		var_dump($feedback);
 	}
 
+	public function fire() {
+		$pushWords = new Collection;
+		$pushWords->push(WordCard::find(Setting::first()->word_id));
+		Category::all()->each(function ($category) use ($pushWords) {
+			$this->info("looking at category {$category->id}");
+			$word = $this->getSentWord($category);
+
+			if ($word)
+				$pushWords->push(['word_id' => $word->id, 'category_id' => $category->id]);
+			else
+				$this->error('Empty category');
+		});
+
+		$this->check();
+		$this->pushWords2($pushWords);
+	}
+
+    public function getSentWord($category) {
+		$words = $category->wordcards;
+		$this->info('Starting cycle');
+
+		while ($words->count() >= 1) {
+			$this->info($words->count());
+
+			if ($words->count() < 2) {
+				$this->error('Too small to pick random');
+				$word = $words->pop();
+			} else {
+				$randKey = rand(0, $words->count() -1);
+				$this->info("Words size: {$words->count()}");
+				$this->info("Key: {$randKey}");
+				$word = $words->pull($randKey);
+			}
+
+			if (!$word)
+				continue;
+
+			$this->info("Got {$word->id}:{$word->word}");
+
+			if ($word->isSent()) {
+				$this->comment('Passed');
+
+				if (SentWordCard::byCat($category)->where('word_id', $word->id)->count() == $words->count()) {
+					SentWordCard::byCat($category)->delete();
+					$this->error('Count reached');
+				}
+				return SentWordCard::create(['category_id' => $category->id, 'word_id' => $word->id]);
+			}
+			$this->comment('Skiped');
+			$words->values();
+		}
+    }
+
+	public function pushWords2($words) {
+		$this->info('Done preparing. Pushing');
+		$devices = PushNotification::DeviceCollection(User::where('device', '<>', '')
+			->with('subscriptions')
+			->groupBy('device')
+			->get()
+			->filter(function ($user) {
+				return $user->subscriptions()->count() > 0;
+			})
+			->map(function ($user) {
+				return PushNotification::Device($user->device, ['badge', 1]);
+			})
+			->toArray());
+
+		PushNotification::app('IOS')->to($devices)
+			->send("Пора знакомится с новыми словами", [
+				"custom" => [
+					"cdata" => $words,
+					"type" => 1
+				]
+			]);
+	}
+
     /**
+     * We know what words to push by looking in sentwords
      * @param $id Category id
      * @param $words array words from this very category
      * @return array pushWords
      */
-    public function getSentWords($id, $words) {
+    public function getSentWordsOrigin($id, $words) {
         $pushWords = [];
         $state = 1;
+//        $c = new Illuminate\Database\Eloquent\Collection;
+//        dd($c);
         while ($state <= 1) {
 
             $wordsCount = $words->count();
@@ -91,7 +179,7 @@ class PushWords extends Command {
                 continue;
 
             $this->info("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
-            if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) {
+            if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) { //GET()?
 
                 if ($wordsCount == SentWordCard::where('category_id', $id)->count()) {
                     SentWordCard::where('category_id', $id)->delete();
@@ -135,10 +223,13 @@ class PushWords extends Command {
 
         $users = User::where('device', '<>', '')->with('subscriptions')->get();
 
-        foreach ($users as $user) {
-            if ($user->subscriptions()->count() > 0)
-                $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
-        }
+        $rawdevices = $users->filter(function ($user) {
+            return $user->subscriptions()->count() > 0;
+        })->map(function ($user) {
+            return PushNotification::Device($user->device, ['badge' => 1]);
+        });
+
+        dd($rawdevices->toArray());
 
         $devices = PushNotification::DeviceCollection($rawdevices);
         PushNotification::app('IOS')
