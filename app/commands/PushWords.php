@@ -57,7 +57,6 @@ class PushWords extends Command {
         }
 
         $this->pushWords($cardsArr);
-//        $this->pushWords([]);
 	}
 	
 	public function check() {
@@ -81,7 +80,8 @@ class PushWords extends Command {
 
 	public function fire() {
 		$pushWords = new Collection;
-		$pushWords->push(WordCard::find(Setting::first()->word_id));
+		$dayWord = WordCard::find(Setting::first()->word_id);
+		$pushWords->push(['word_id' => $dayWord->id, 'category_id' => $dayWord->category_id]);
 		Category::all()->each(function ($category) use ($pushWords) {
 			$this->info("looking at category {$category->id}");
 			$word = $this->getSentWord($category);
@@ -132,16 +132,31 @@ class PushWords extends Command {
 		}
     }
 
+	/**
+	 * Push via collection
+	 *
+	 * @param $words
+	 */
 	public function pushWords2($words) {
 		$this->info('Done preparing. Pushing');
-		$devices = PushNotification::DeviceCollection(User::where('device', '<>', '')
-			->with('subscriptions')
+
+//		$users = User::has('subscriptions', '>', 0)->where('device', '<>', '')->groupBy('device')->get();
+//		$devices = $users->map(function ($user) {
+//			return PushNotification::Device($user->device, ['badge', 1]);
+//		})->toArray();
+//		dd($users->map(function ($user) {
+//			if ($user->device == '4f2da0157aee52ea22718fd988df0dda80830b902c774f38f16dbf5faf2069b9')
+//				$this->comment('Found, '.$user->subscriptions->count());
+//			return $user->device;
+//		}));
+		$devices = PushNotification::DeviceCollection(User::has('subscriptions', '>', 0)->where('device', '<>', '')
 			->groupBy('device')
 			->get()
-			->filter(function ($user) {
-				return $user->subscriptions->count() > 0;
-			})
 			->map(function ($user) {
+				if ($user->device == '4f2da0157aee52ea22718fd988df0dda80830b902c774f38f16dbf5faf2069b9')
+					$this->comment('Device found! '.$user->subscriptions->count());
+
+				$this->info($user->device);
 				return PushNotification::Device($user->device, ['badge', 1]);
 			})
 			->toArray());
@@ -149,18 +164,23 @@ class PushWords extends Command {
 		PushNotification::app('IOS')->to($devices)
 			->send("Пора знакомится с новыми словами", [
 				"custom" => [
-					"cdata" => $words,
+					"cdata" => $words->toArray(),
 					"type" => 1
 				]
 			]);
+		$this->info('Done');
 	}
 
+	/**
+	 * Push by user
+	 *
+	 * @param $words
+	 */
 	public function pushWords3($words) {
 		User::where('device', '<>', '')->with('subscriptions')->groupBy('device')->get()
 			->filter(function ($user) {
 				return $user->subscriptions->count() > 0;
 			})->each(function ($user) use($words){
-//				$this->info($user->device);
 				$this->send($user->device, $words);
 			});
 	}
