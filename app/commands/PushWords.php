@@ -153,9 +153,6 @@ class PushWords extends Command {
 			->groupBy('device')
 			->get()
 			->map(function ($user) {
-				if ($user->device == '4f2da0157aee52ea22718fd988df0dda80830b902c774f38f16dbf5faf2069b9')
-					$this->comment('Device found! '.$user->subscriptions->count());
-
 				$this->info($user->device);
 				return PushNotification::Device($user->device, ['badge', 1]);
 			})
