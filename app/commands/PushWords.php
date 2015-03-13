@@ -222,7 +222,7 @@ class PushWords extends Command {
                 continue;
 
             $this->info("Picked random word: ".$randomWord->word.' ('.$randomWord->id.')');
-            if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)) { //GET()?
+            if (SentWordCard::where('word_id', $randomWord->id)->where('category_id', $id)->first()) { //GET()?
 
                 if ($wordsCount == SentWordCard::where('category_id', $id)->count()) {
                     SentWordCard::where('category_id', $id)->delete();
