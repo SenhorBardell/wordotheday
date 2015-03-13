@@ -118,7 +118,7 @@ class PushWords extends Command {
 
 			$this->info("Got {$word->id}:{$word->word}");
 
-			if ($word->isSent()) {
+			if (!$word->isSent()) {
 				$this->comment('Passed');
 
 				if (SentWordCard::byCat($category)->where('word_id', $word->id)->count() == $words->count()) {
