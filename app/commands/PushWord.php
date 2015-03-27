@@ -39,10 +39,6 @@ class PushWord extends Command {
 	 */
 	public function fire()
 	{
-//		$users = User::where('device', '<>', '')->groupBy('device')->get();
-//		$users->each(function ($user) {
-//			$this->comment($user->device);
-//		});
         $dayWord = $this->getDayWord();
 
         $this->updateSettings($dayWord['word_id']);
@@ -178,7 +174,7 @@ class PushWord extends Command {
         }
         $devices = PushNotification::DeviceCollection($rawdevices);
 
-        PushNotification::app('IOS')
+        /*PushNotification::app('IOS')
             ->to($devices)
             ->send($word->word." - новое слово для изучения", [
                 "custom" => [
@@ -190,7 +186,7 @@ class PushWord extends Command {
                     ],
                     "type" => 0,
                 ]
-            ]);
+            ]);*/
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
 
