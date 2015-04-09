@@ -174,7 +174,7 @@ class PushWord extends Command {
         }
         $devices = PushNotification::DeviceCollection($rawdevices);
 
-        /*PushNotification::app('IOS')
+        PushNotification::app('IOS')
             ->to($devices)
             ->send($word->word." - новое слово для изучения", [
                 "custom" => [
@@ -186,7 +186,7 @@ class PushWord extends Command {
                     ],
                     "type" => 0,
                 ]
-            ]);*/
+            ]);
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
 
