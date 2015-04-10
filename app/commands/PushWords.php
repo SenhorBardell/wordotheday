@@ -93,7 +93,7 @@ class PushWords extends Command {
 		});
 
 		$this->check();
-		$this->pushWords2($pushWords);
+//		$this->pushWords2($pushWords);
 	}
 
     public function getSentWord($category) {
@@ -118,13 +118,14 @@ class PushWords extends Command {
 
 			$this->info("Got {$word->id}:{$word->word}");
 
+			if (SentWordCard::byCat($category)->count() >= $words->count()) {
+				SentWordCard::byCat($category)->delete();
+				$this->error('Count reached');
+			}
+
 			if (!$word->isSent()) {
 				$this->comment('Passed');
 
-				if (SentWordCard::byCat($category)->where('word_id', $word->id)->count() == $words->count()) {
-					SentWordCard::byCat($category)->delete();
-					$this->error('Count reached');
-				}
 				return SentWordCard::create(['category_id' => $category->id, 'word_id' => $word->id]);
 			}
 			$this->comment('Skiped');
