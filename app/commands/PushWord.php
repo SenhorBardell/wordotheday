@@ -162,31 +162,31 @@ class PushWord extends Command {
 
 	public function pushWord($word) {
         $word = WordCard::find($word['word_id']);
-        $users = User::where('device', '<>', '')->groupBy('device')->get();
         DB::table('users')->where('word_id', 0)->update(['word_id' => Setting::first()->word_id]);
+        User::where('device', '<>', '')->groupBy('device')->chunk(500, function ($users) use ($word) {
+            $devices = PushNotification::DeviceCollection($users->map(function ($user) {
+                return PushNotification::Device($user->device, ['badge' => 1]);
+            })->toArray());
+//            foreach ($users as $user) {
+//                $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
+//            }
+//            $devices = PushNotification::DeviceCollection($rawdevices);
 
-//        foreach ($users as $user) {
-//            $this->send($user->device, $word);
-//        }
-
-        foreach ($users as $user) {
-            $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
-        }
-        $devices = PushNotification::DeviceCollection($rawdevices);
-
-        PushNotification::app('IOS')
-            ->to($devices)
-            ->send($word->word." - новое слово для изучения", [
-                "custom" => [
-                    "cdata" => [
-                        [
-                        "word_id" => $word->id,
-                        "cat_id" => $word->category_id,
-                       ]
-                    ],
-                    "type" => 0,
-                ]
-            ]);
+            PushNotification::app('IOS')
+                ->to($devices)
+                ->send($word->word." - новое слово для изучения", [
+                    "custom" => [
+                        "cdata" => [
+                            [
+                                "word_id" => $word->id,
+                                "cat_id" => $word->category_id,
+                            ]
+                        ],
+                        "type" => 0,
+                    ]
+                ]);
+            $this->line('Chunk sent');
+        });
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
 
