@@ -93,7 +93,7 @@ class PushWords extends Command {
 		});
 
 		$this->check();
-//		$this->pushWords2($pushWords);
+		$this->pushWords2($pushWords);
 	}
 
     public function getSentWord($category) {

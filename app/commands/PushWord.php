@@ -163,14 +163,17 @@ class PushWord extends Command {
 	public function pushWord($word) {
         $word = WordCard::find($word['word_id']);
         DB::table('users')->where('word_id', 0)->update(['word_id' => Setting::first()->word_id]);
-        User::where('device', '<>', '')->groupBy('device')->chunk(500, function ($users) use ($word) {
+        User::where('device', '<>', '')->groupBy('device')->chunk(200, function ($users) use ($word) {
             $devices = PushNotification::DeviceCollection($users->map(function ($user) {
+                $this->line($user->device);
                 return PushNotification::Device($user->device, ['badge' => 1]);
             })->toArray());
 //            foreach ($users as $user) {
 //                $rawdevices[] = PushNotification::Device($user->device, ['badge' => 1]);
 //            }
 //            $devices = PushNotification::DeviceCollection($rawdevices);
+
+            $this->line('Sending chunk of 200...');
 
             PushNotification::app('IOS')
                 ->to($devices)
@@ -185,7 +188,6 @@ class PushWord extends Command {
                         "type" => 0,
                     ]
                 ]);
-            $this->line('Chunk sent');
         });
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
