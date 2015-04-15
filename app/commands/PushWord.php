@@ -175,19 +175,23 @@ class PushWord extends Command {
 
             $this->line('Sending chunk of 200...');
 
-            PushNotification::app('IOS')
-                ->to($devices)
-                ->send($word->word." - новое слово для изучения", [
-                    "custom" => [
-                        "cdata" => [
-                            [
-                                "word_id" => $word->id,
-                                "cat_id" => $word->category_id,
-                            ]
-                        ],
-                        "type" => 0,
-                    ]
-                ]);
+            try {
+                PushNotification::app('IOS')
+                    ->to($devices)
+                    ->send($word->word . " - новое слово для изучения", [
+                        "custom" => [
+                            "cdata" => [
+                                [
+                                    "word_id" => $word->id,
+                                    "cat_id" => $word->category_id,
+                                ]
+                            ],
+                            "type" => 0,
+                        ]
+                    ]);
+            } catch (Exception $e) {
+                $this->error($e);
+            }
         });
         $this->info('Dayword '.$word->word. '('.$word->id.') category '.$word->category_id.' pushed.');
 	}
